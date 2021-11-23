@@ -10,7 +10,7 @@ namespace IssueTracker.Services
     public interface IIssuesService
     {
         Task<List<IssueDto>> GetIssuesForProject(int projectId);
-        Task<int> AddIssue(AddIssueDto dto);
+        Task<int> AddIssue(AddIssueDto dto, int currentUserId);
         Task UpdateIssue(UpdateIssueDto dto);
     }
 
@@ -21,12 +21,14 @@ namespace IssueTracker.Services
         public string Title { get; set; }
         public int StatusId { get; set; }
         public string StatusName { get; set; }
+        public string UserName { get; set; }
     }
 
     public class AddIssueDto
     {
         public int ProjectId { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string Text { get; set; }
         public int? AssignedUserId { get; set; }
         public int StatusId { get; set; }
@@ -62,12 +64,13 @@ namespace IssueTracker.Services
                     CaseReference = x.CaseReference,
                     Title = x.Title,
                     StatusId = x.IssueStatusId,
-                    StatusName = x.IssueStatus.Name
+                    StatusName = x.IssueStatus.Name,
+                    UserName = x.AssignedUser.Name
                 }).ToListAsync();
 
         }
 
-        public async Task<int> AddIssue(AddIssueDto dto)
+        public async Task<int> AddIssue(AddIssueDto dto, int currentUserId)
         {
             await using var db = _contextFactory.Create();
 
@@ -82,7 +85,9 @@ namespace IssueTracker.Services
             issue.SetCaseNumber(++caseNumber, project.Abbreviation);
             issue.Title = dto.Title;
             issue.RawText = dto.Text;
+            issue.ProjectId = project.Id;
             issue.AssignedUserId = dto.AssignedUserId;
+            issue.CreatedByUserId = currentUserId;
             issue.IssueStatusId = dto.StatusId;
             db.Issues.Add(issue);
             

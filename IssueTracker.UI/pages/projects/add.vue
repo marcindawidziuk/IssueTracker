@@ -11,7 +11,7 @@
     </div>
 
     <div class="inline">
-      <button class="bg-blue-600 text-white p-2 rounded">Add project</button>
+      <button class="bg-blue-600 text-white p-2 rounded" @click="add()">Add project</button>
     </div>
   </div>
 </template>
@@ -19,8 +19,7 @@
 <script setup lang="ts">
 
 import {
-  AddProjectDto,
-  CreateIssueStatusDto,
+  AddProjectDto, CreateIssueStatusDto,
   ICreateIssueStatusDto,
   ProjectsClient
 } from "~/src/services/api.generated.clients";
@@ -36,15 +35,18 @@ const defaultStatuses: ICreateIssueStatusDto[] = [
 
 const statuses = ref(defaultStatuses)
 
-const add = function(){
+const router = useRouter();
+const add = async function(){
   try {
     const client = new ProjectsClient();
+    const s = statuses.value.map(x => new CreateIssueStatusDto(x))
     const dto = new AddProjectDto({
       name: name.value,
       abbreviation: abbreviation.value,
-      statuses: statuses.value
+      statuses: s
     });
-    client.add(dto);
+    const projectId = await client.add(dto);
+    await router.push({path: `/issues/${projectId}`})
   } catch (e) {
     console.log("Failed adding a project", e)
     alert("Failed adding a project")

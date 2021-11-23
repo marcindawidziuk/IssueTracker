@@ -20,15 +20,15 @@ namespace IssueTracker.Api.Controllers
         }
 
         [HttpPost("add")]
-        public Task<int> AddProject(AddProjectDto dto, int userId)
+        public Task<int> AddProject(AddProjectDto dto)
         {
-            return _projectsService.AddProject(dto, userId);
+            return _projectsService.AddProject(dto, CurrentUserId());
         }
 
         [HttpPost("update")]
-        public Task<int> EditProject(EditProjectDto dto, int userId)
+        public Task<int> EditProject(EditProjectDto dto)
         {
-            return _projectsService.EditProject(dto, userId);
+            return _projectsService.EditProject(dto, CurrentUserId());
         }
     }
 }

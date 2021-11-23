@@ -22,7 +22,7 @@ namespace IssueTracker.Api.Controllers
         [HttpPost("add")]
         public async Task<int> AddIssue(AddIssueDto dto)
         {
-            return await _issuesService.AddIssue(dto);
+            return await _issuesService.AddIssue(dto, CurrentUserId());
         }
         
         [HttpPost("update")]

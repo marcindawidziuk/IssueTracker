@@ -2,14 +2,14 @@
   <div class="m-4">
     <h3 class="text-xl">Projects</h3>
     <div v-for="project in projects">
-      <span>{{ project.name }}</span>
+      <router-link :to="`/issues/${project.id}`" class="m-3">{{ project.name }}</router-link>
     </div>
     
     <div v-if="!projects?.length">
       No projects
     </div>
     
-    <div class="my-2">
+    <div class="my-3">
       <router-link to="/projects/add" class="bg-indigo-700 rounded p-2 text-white">
         New project
       </router-link>
