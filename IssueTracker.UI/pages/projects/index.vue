@@ -2,7 +2,7 @@
   <div class="m-4">
     <h3 class="text-xl">Projects</h3>
     <div v-for="project in projects">
-      <router-link :to="`/issues/${project.id}`" class="m-3">{{ project.name }}</router-link>
+      <router-link :to="`/issues/?projectId=${project.id}`" class="m-3">{{ project.name }}</router-link>
     </div>
     
     <div v-if="!projects?.length">

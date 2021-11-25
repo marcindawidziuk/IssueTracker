@@ -5,7 +5,7 @@
       <img :src="avatar" alt="Avatar" class="w-6 h-6 rounded-full ml-3" draggable="false">
     </div>
     <div class="flex mt-4 justify-between items-center">
-<!--      <span class="text-sm text-gray-600">Sep 14</span>-->
+      <span class="text-sm text-gray-600">{{ reference }}</span>
       <div class="px-3 h-6 rounded-full text-xs font-semibold flex items-center bg-red-100 text-teal-700">
         <span class="w-2 h-2 rounded-full mr-1 bg-red-400"></span>
         <span>{{ tagName }}</span>
@@ -29,6 +29,10 @@ defineProps({
     required: true
   },
   tagName: {
+    type: String,
+    required: true
+  },
+  reference: {
     type: String,
     required: true
   }

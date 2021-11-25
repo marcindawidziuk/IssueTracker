@@ -30,5 +30,11 @@ namespace IssueTracker.Api.Controllers
         {
             await _issuesService.UpdateIssue(dto);
         }
+        
+        [HttpPost("update-status")]
+        public async Task UpdateIssue(int issueId, int issueStatusId)
+        {
+            await _issuesService.UpdateIssueStatus(issueId, issueStatusId);
+        }
     }
 }

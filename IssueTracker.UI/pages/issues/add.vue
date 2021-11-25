@@ -35,14 +35,12 @@
                     Assigned User
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
-                    <select v-model="selectedStatus">
+                    <select v-model="selectedStatus" class="p-1 m-1">
                       <option v-for="status in statuses"
                               :value="status">
-                        {{status}}
+                        {{status.name}}
                       </option>
                     </select>
-                    <input type="text" name="company-website" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 p-2"
-                           placeholder="label1, label2">
                   </div>
                 </div>
               </div>

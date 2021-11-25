@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IssueTracker.Data;
@@ -12,12 +13,13 @@ namespace IssueTracker.Services
         Task<List<IssueDto>> GetIssuesForProject(int projectId);
         Task<int> AddIssue(AddIssueDto dto, int currentUserId);
         Task UpdateIssue(UpdateIssueDto dto);
+        Task UpdateIssueStatus(int id, int issueStatusId);
     }
 
     public class IssueDto
     {
         public int Id { get; set; }
-        public string CaseReference { get; set; }
+        public string Reference { get; set; }
         public string Title { get; set; }
         public int StatusId { get; set; }
         public string StatusName { get; set; }
@@ -61,7 +63,7 @@ namespace IssueTracker.Services
                 .Select(x => new IssueDto
                 {
                     Id = x.Id,
-                    CaseReference = x.CaseReference,
+                    Reference = x.CaseReference,
                     Title = x.Title,
                     StatusId = x.IssueStatusId,
                     StatusName = x.IssueStatus.Name,
@@ -104,6 +106,17 @@ namespace IssueTracker.Services
             issue.Title = dto.Title;
             issue.RawText = dto.Text;
             issue.IssueStatusId = dto.StatusId;
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateIssueStatus(int id, int issueStatusId)
+        {
+            await using var db = _contextFactory.Create();
+
+            var issue = await db.Issues.SingleAsync(a => a.Id == id);
+            issue.IssueStatusId = issueStatusId;
+            issue.LastModifiedDate = DateTimeOffset.UtcNow;
 
             await db.SaveChangesAsync();
         }
