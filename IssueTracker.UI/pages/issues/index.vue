@@ -22,7 +22,7 @@
               @change="onChange(column.status, $event)"
               :animation="200"
               item-key="id"
-              class="list-group min-h-[250px]"
+              class="list-group h-full"
               group="tasks"
               ghost-class="ghost"
               @start="dragging = true"

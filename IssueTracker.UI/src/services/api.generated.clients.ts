@@ -600,7 +600,7 @@ export class ProjectsClient {
         return Promise.resolve<number>(<any>null);
     }
 
-    update(dto: EditProjectDto , cancelToken?: CancelToken | undefined): Promise<number> {
+    update(dto: UpdateProjectDto , cancelToken?: CancelToken | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Projects/update";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1331,12 +1331,13 @@ export interface ICreateIssueStatusDto {
     name: string | undefined;
 }
 
-export class EditProjectDto implements IEditProjectDto {
+export class UpdateProjectDto implements IUpdateProjectDto {
     id!: number;
     name!: string | undefined;
     abbreviation!: string | undefined;
+    statuses!: UpdateProjectStatusDto[] | undefined;
 
-    constructor(data?: IEditProjectDto) {
+    constructor(data?: IUpdateProjectDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1350,12 +1351,17 @@ export class EditProjectDto implements IEditProjectDto {
             this.id = _data["id"];
             this.name = _data["name"];
             this.abbreviation = _data["abbreviation"];
+            if (Array.isArray(_data["statuses"])) {
+                this.statuses = [] as any;
+                for (let item of _data["statuses"])
+                    this.statuses!.push(UpdateProjectStatusDto.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): EditProjectDto {
+    static fromJS(data: any): UpdateProjectDto {
         data = typeof data === 'object' ? data : {};
-        let result = new EditProjectDto();
+        let result = new UpdateProjectDto();
         result.init(data);
         return result;
     }
@@ -1365,14 +1371,60 @@ export class EditProjectDto implements IEditProjectDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["abbreviation"] = this.abbreviation;
+        if (Array.isArray(this.statuses)) {
+            data["statuses"] = [];
+            for (let item of this.statuses)
+                data["statuses"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
-export interface IEditProjectDto {
+export interface IUpdateProjectDto {
     id: number;
     name: string | undefined;
     abbreviation: string | undefined;
+    statuses: UpdateProjectStatusDto[] | undefined;
+}
+
+export class UpdateProjectStatusDto implements IUpdateProjectStatusDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IUpdateProjectStatusDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): UpdateProjectStatusDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProjectStatusDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUpdateProjectStatusDto {
+    id: number | undefined;
+    name: string | undefined;
 }
 
 export class ProjectDetailsDto implements IProjectDetailsDto {

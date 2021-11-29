@@ -31,6 +31,7 @@ namespace IssueTracker.Services
 
             return await db.IssueStatuses
                 .Where(x => x.ProjectId == projectId)
+                .OrderBy(x => x.Priority)
                 .Select(x => new IssueStatusDto
                 {
                     Id = x.Id,

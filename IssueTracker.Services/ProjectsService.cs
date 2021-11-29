@@ -12,7 +12,7 @@ namespace IssueTracker.Services
     {
         Task<List<ProjectDto>> GetAllProjects();
         Task<int> AddProject(AddProjectDto dto, int userId);
-        Task<int> EditProject(EditProjectDto dto, int userId);
+        Task<int> EditProject(UpdateProjectDto dto, int userId);
         Task<ProjectDetailsDto> GetDetails(int id);
     }
 
@@ -42,11 +42,18 @@ namespace IssueTracker.Services
         public string Name { get; set; }
     }
     
-    public class EditProjectDto
+    public class UpdateProjectDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Abbreviation { get; set; }
+        public List<UpdateProjectStatusDto> Statuses { get; set; }
+
+        public class UpdateProjectStatusDto
+        {
+            public int? Id { get; set; }
+            public string Name { get; set; }
+        }
     }
     
     public class ProjectsService : IProjectsService
@@ -94,7 +101,7 @@ namespace IssueTracker.Services
             return project.Id;
         }
 
-        public async Task<int> EditProject(EditProjectDto dto, int userId)
+        public async Task<int> EditProject(UpdateProjectDto dto, int userId)
         {
             await using var db = _contextFactory.Create();
 
@@ -107,13 +114,46 @@ namespace IssueTracker.Services
             project.Name = dto.Name;
             project.Abbreviation = dto.Abbreviation;
 
+            var statuses = await db.IssueStatuses
+                .Where(x => x.ProjectId == project.Id)
+                .ToListAsync();
+
+            var statusPriority = 0;
+
+            var statusIds = dto.Statuses.Select(x => x.Id).ToList();
+            var statusesToRemove = statuses.Where(x => statusIds.Contains(x.Id) == false).ToList();
+            db.IssueStatuses.RemoveRange(statusesToRemove);
+                
+            foreach (var updateProjectStatusDto in dto.Statuses)
+            {
+                var existingStatus = statuses.SingleOrDefault(x => x.Id == updateProjectStatusDto.Id);
+                if (existingStatus == null)
+                {
+                    existingStatus = new IssueStatus
+                    {
+                        Project = project
+                    };
+                    db.IssueStatuses.Add(existingStatus);
+                }
+
+                existingStatus.Name = updateProjectStatusDto.Name;
+                existingStatus.Priority = statusPriority++;
+            }
+
             var issues = await db.Issues
                 .Where(x => x.ProjectId == project.Id)
-                .Where(x => x.CaseReference.StartsWith(project.Abbreviation) == false)
+                .Where(x => x.CaseReference.StartsWith(project.Abbreviation) == false
+                    || statusIds.Contains(x.IssueStatusId) == false)
                 .ToListAsync();
             foreach (var issue in issues)
             {
                 issue.SetCaseNumber(issue.CaseNumber, project.Abbreviation);
+
+                var shouldChangeStatus = statusIds.Contains(issue.IssueStatusId) == false;
+                if (shouldChangeStatus)
+                {
+                    issue.IssueStatus = statuses.First();
+                }
             }
             
             await db.SaveChangesAsync();
