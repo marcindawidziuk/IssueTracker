@@ -1,14 +1,18 @@
 ﻿<template>
   <div class="m-4">
-    <h3 class="text-xl">Projects</h3>
-    <div v-for="project in projects">
-      <router-link :to="`/issues/?projectId=${project.id}`" class="m-3">{{ project.name }}</router-link>
+    <div class="p-2">
+      <h3 class="text-xl">Projects</h3>
+      <div v-for="project in projects" class="my-3">
+        <div class="pt-4">
+          <router-link :to="`/issues/?projectId=${project.id}`" class="m-3 p-2 bg-indigo-100 ">{{ project.name }}</router-link>
+        </div>
+      </div>
+      
+      <div v-if="!projects?.length">
+        No projects
+      </div>
+
     </div>
-    
-    <div v-if="!projects?.length">
-      No projects
-    </div>
-    
     <div class="my-3">
       <router-link to="/projects/add" class="bg-indigo-700 rounded p-2 text-white">
         New project

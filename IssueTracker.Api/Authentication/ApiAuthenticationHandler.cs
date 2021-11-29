@@ -52,8 +52,6 @@ namespace IssueTracker.Api.Authentication
 
             using var scope = _serviceScopeFactory.CreateScope();
 
-            // var cache = scope.ServiceProvider.GetRequiredService<IAppCache>();
-
             var service = scope.ServiceProvider.GetRequiredService<IContextFactory>();
 
             await using var db = service.Create();
@@ -61,6 +59,9 @@ namespace IssueTracker.Api.Authentication
             var apiToken = await db.ApiTokens
                 .Where(x => x.Token == token)
                 .SingleOrDefaultAsync();
+            
+            if (apiToken == null)
+                return AuthenticateResult.Fail("No token found");
 
             if (apiToken.ExpiryDateUtc < DateTime.UtcNow)
             {

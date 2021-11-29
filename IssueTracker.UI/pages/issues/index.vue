@@ -1,6 +1,7 @@
 ﻿<template>
   <div>
     <h3 class="text-xl m-2">Issues - WinGen</h3>
+    <router-link :to="`/projects/edit?projectId=${projectId}`">Edit</router-link>
     <router-link :to="`/issues/add?projectId=${projectId}`" class="bg-gray-800 text-gray-50 p-2 rounded m-2">
         <div class="inline-block items-center align-middle">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,10 +33,12 @@
               <div class="list-group-item">
                 <IssueCard 
                     :key="element.id" 
-                    :title="element.title" 
-                    :avatar="`https://avatars.dicebear.com/api/initials/${element.userName}.svg`" 
+                    :id="element.id"
+                    :title="element.title"
+                    :avatar="`https://avatars.dicebear.com/api/initials/${element.userName}.svg`"
                     :reference="element.reference"
                 />
+<!--                :avatar="`https://avatars.dicebear.com/api/initials/${element.userName}.svg`"-->
               </div>
             </template>
             <template #footer>
@@ -100,12 +103,10 @@ const init = async function (){
     })
     
     issuesByColumn.value = i
-    
   } catch (e) {
     console.log("Failed loading the board", e)
     alert("Failed loading the board")
   }
-
 }
 
 const onChange = async function(status: IssueStatusDto, arg: any){

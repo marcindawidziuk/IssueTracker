@@ -12,6 +12,12 @@ namespace IssueTracker.Api.Controllers
         {
             _issuesService = issuesService;
         }
+        
+        [HttpGet("get")]
+        public async Task<IssueDetailsDto> GetDetails(int issueId)
+        {
+            return await _issuesService.GetIssue(issueId);
+        }
 
         [HttpGet("search")]
         public Task<List<IssueDto>> GetIssuesForProject(int projectId)

@@ -14,6 +14,19 @@ namespace IssueTracker.Services
         Task<int> AddIssue(AddIssueDto dto, int currentUserId);
         Task UpdateIssue(UpdateIssueDto dto);
         Task UpdateIssueStatus(int id, int issueStatusId);
+        Task<IssueDetailsDto> GetIssue(int id);
+    }
+
+    public class IssueDetailsDto
+    {
+        public int Id { get; set; }
+        public string Reference { get; set; }
+        public string Title { get; set; }
+        public int? AssignedUserId { get; set; }
+        public int StatusId { get; set; }
+        public string Description { get; set; }
+        public int CreatedByUserId { get; set; }
+        public int ProjectId { get; set; }
     }
 
     public class IssueDto
@@ -43,6 +56,7 @@ namespace IssueTracker.Services
         public string Text { get; set; }
         public int? AssignedUserId { get; set; }
         public int StatusId { get; set; }
+        public int Id { get; set; }
     }
     
     
@@ -77,6 +91,7 @@ namespace IssueTracker.Services
             await using var db = _contextFactory.Create();
 
             var caseNumber = await db.Issues
+                .Where(x => x.ProjectId == dto.ProjectId)
                 .Select(x => x.CaseNumber)
                 .DefaultIfEmpty()
                 .MaxAsync();
@@ -101,7 +116,7 @@ namespace IssueTracker.Services
         {
             await using var db = _contextFactory.Create();
 
-            var issue = new Issue();
+            var issue = await db.Issues.SingleAsync(x => x.Id == dto.Id);
             issue.AssignedUserId = dto.AssignedUserId;
             issue.Title = dto.Title;
             issue.RawText = dto.Text;
@@ -119,6 +134,25 @@ namespace IssueTracker.Services
             issue.LastModifiedDate = DateTimeOffset.UtcNow;
 
             await db.SaveChangesAsync();
+        }
+
+        public async Task<IssueDetailsDto> GetIssue(int id)
+        {
+            await using var db = _contextFactory.Create();
+
+            return await db.Issues
+                .Select(x => new IssueDetailsDto
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.RawText,
+                    Reference = x.CaseReference,
+                    StatusId = x.IssueStatusId,
+                    AssignedUserId = x.AssignedUserId,
+                    CreatedByUserId = x.CreatedByUserId,
+                    ProjectId = x.ProjectId
+                })
+                .SingleAsync(a => a.Id == id);
         }
     }
 }

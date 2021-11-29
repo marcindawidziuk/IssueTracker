@@ -1,6 +1,7 @@
 ﻿<template>
 
   <div>
+    <router-link v-if="details?.projectId" :to="`/issues/?projectId=${details.projectId}`">Back</router-link>
     <div class="md:grid md:grid-cols-3 md:gap-6">
       <div class="mt-5 md:mt-0 md:col-span-2">
           <div class="shadow sm:rounded-md sm:overflow-hidden">
@@ -101,37 +102,51 @@
 </template>
 
 <script setup lang="ts">
-import {AddIssueDto, IssuesClient, IssueStatusDto, IssueStatusesClient} from "~/src/services/api.generated.clients";
+import {
+  AddIssueDto,
+  IssueDetailsDto,
+  IssuesClient,
+  IssueStatusDto,
+  IssueStatusesClient, UpdateIssueDto
+} from "~/src/services/api.generated.clients";
 import {ref} from "vue";
+import {useFetch} from "#app";
 
-const title = ref("")
-const description = ref("")
 const statuses = ref<IssueStatusDto[]>([])
 const selectedStatus = ref<IssueStatusDto>()
 
 const route = useRoute()
 const router = useRouter()
+const details = ref<IssueDetailsDto>()
+const title = ref("")
+const description = ref("")
+
 
 const init = async function (){
-  const projectId = route.query.projectId as number;
+  const issueId = parseInt(route.params.id as string)
+  const issuesClient = new IssuesClient();
+  const issueDetails = await issuesClient.get(issueId)
+  details.value = issueDetails;
+  title.value = issueDetails.title
+  description.value = issueDetails.description
+
   const client = new IssueStatusesClient()
-  statuses.value = await client.getForProject(projectId)
-  selectedStatus.value = statuses.value[0]
+  statuses.value = await client.getForProject(issueDetails.projectId)
+  selectedStatus.value = statuses.value.find(x => x.id == issueDetails.statusId)
+  
 }
 
 const save = async function (){
   try {
-    const projectId = parseInt(route.query.projectId) as number;
     const client = new IssuesClient();
-    const dto = new AddIssueDto({
-      projectId: projectId,
+    const dto = new UpdateIssueDto({
+      id: details.value.id,
       title: title.value,
       text: description.value,
       statusId: selectedStatus.value.id
     })
-    await client.add(dto)
-    await router.push(`/issues/?projectId=${projectId}`)
-    
+    await client.update(dto)
+    await router.push('/issues/?projectId=' + details.value?.projectId)
   } catch (e) {
     console.log("Failed adding an issue", e)
     alert("Failed adding an issue")

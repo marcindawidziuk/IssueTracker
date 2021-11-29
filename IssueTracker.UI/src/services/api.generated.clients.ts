@@ -177,6 +177,57 @@ export class IssuesClient {
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
+    get(issueId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<IssueDetailsDto> {
+        let url_ = this.baseUrl + "/api/Issues/get?";
+        if (issueId === null)
+            throw new Error("The parameter 'issueId' cannot be null.");
+        else if (issueId !== undefined)
+            url_ += "issueId=" + encodeURIComponent("" + issueId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGet(_response);
+        });
+    }
+
+    protected processGet(response: AxiosResponse): Promise<IssueDetailsDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = IssueDetailsDto.fromJS(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<IssueDetailsDto>(<any>null);
+    }
+
     search(projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<IssueDto[]> {
         let url_ = this.baseUrl + "/api/Issues/search?";
         if (projectId === null)
@@ -599,6 +650,56 @@ export class ProjectsClient {
         }
         return Promise.resolve<number>(<any>null);
     }
+
+    details(id: number , cancelToken?: CancelToken | undefined): Promise<ProjectDetailsDto> {
+        let url_ = this.baseUrl + "/api/Projects/details/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDetails(_response);
+        });
+    }
+
+    protected processDetails(response: AxiosResponse): Promise<ProjectDetailsDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = ProjectDetailsDto.fromJS(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ProjectDetailsDto>(<any>null);
+    }
 }
 
 export class Client {
@@ -826,6 +927,70 @@ export interface IRegisterRequest {
     password: string | undefined;
 }
 
+export class IssueDetailsDto implements IIssueDetailsDto {
+    id!: number;
+    reference!: string | undefined;
+    title!: string | undefined;
+    assignedUserId!: number | undefined;
+    statusId!: number;
+    description!: string | undefined;
+    createdByUserId!: number;
+    projectId!: number;
+
+    constructor(data?: IIssueDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.reference = _data["reference"];
+            this.title = _data["title"];
+            this.assignedUserId = _data["assignedUserId"];
+            this.statusId = _data["statusId"];
+            this.description = _data["description"];
+            this.createdByUserId = _data["createdByUserId"];
+            this.projectId = _data["projectId"];
+        }
+    }
+
+    static fromJS(data: any): IssueDetailsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new IssueDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["reference"] = this.reference;
+        data["title"] = this.title;
+        data["assignedUserId"] = this.assignedUserId;
+        data["statusId"] = this.statusId;
+        data["description"] = this.description;
+        data["createdByUserId"] = this.createdByUserId;
+        data["projectId"] = this.projectId;
+        return data; 
+    }
+}
+
+export interface IIssueDetailsDto {
+    id: number;
+    reference: string | undefined;
+    title: string | undefined;
+    assignedUserId: number | undefined;
+    statusId: number;
+    description: string | undefined;
+    createdByUserId: number;
+    projectId: number;
+}
+
 export class IssueDto implements IIssueDto {
     id!: number;
     reference!: string | undefined;
@@ -944,6 +1109,7 @@ export class UpdateIssueDto implements IUpdateIssueDto {
     text!: string | undefined;
     assignedUserId!: number | undefined;
     statusId!: number;
+    id!: number;
 
     constructor(data?: IUpdateIssueDto) {
         if (data) {
@@ -961,6 +1127,7 @@ export class UpdateIssueDto implements IUpdateIssueDto {
             this.text = _data["text"];
             this.assignedUserId = _data["assignedUserId"];
             this.statusId = _data["statusId"];
+            this.id = _data["id"];
         }
     }
 
@@ -978,6 +1145,7 @@ export class UpdateIssueDto implements IUpdateIssueDto {
         data["text"] = this.text;
         data["assignedUserId"] = this.assignedUserId;
         data["statusId"] = this.statusId;
+        data["id"] = this.id;
         return data; 
     }
 }
@@ -988,6 +1156,7 @@ export interface IUpdateIssueDto {
     text: string | undefined;
     assignedUserId: number | undefined;
     statusId: number;
+    id: number;
 }
 
 export class IssueStatusDto implements IIssueStatusDto {
@@ -1201,6 +1370,50 @@ export class EditProjectDto implements IEditProjectDto {
 }
 
 export interface IEditProjectDto {
+    id: number;
+    name: string | undefined;
+    abbreviation: string | undefined;
+}
+
+export class ProjectDetailsDto implements IProjectDetailsDto {
+    id!: number;
+    name!: string | undefined;
+    abbreviation!: string | undefined;
+
+    constructor(data?: IProjectDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.abbreviation = _data["abbreviation"];
+        }
+    }
+
+    static fromJS(data: any): ProjectDetailsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProjectDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["abbreviation"] = this.abbreviation;
+        return data; 
+    }
+}
+
+export interface IProjectDetailsDto {
     id: number;
     name: string | undefined;
     abbreviation: string | undefined;

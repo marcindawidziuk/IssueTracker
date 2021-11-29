@@ -30,5 +30,11 @@ namespace IssueTracker.Api.Controllers
         {
             return _projectsService.EditProject(dto, CurrentUserId());
         }
+        
+        [HttpPost("details/{id}")]
+        public Task<ProjectDetailsDto> Details(int id)
+        {
+            return _projectsService.GetDetails(id);
+        }
     }
 }
