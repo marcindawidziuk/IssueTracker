@@ -26,9 +26,9 @@ namespace IssueTracker.Api.Controllers
         }
 
         [HttpPost("update")]
-        public Task<int> EditProject(UpdateProjectDto dto)
+        public Task<int> UpdateProject(UpdateProjectDto dto)
         {
-            return _projectsService.EditProject(dto, CurrentUserId());
+            return _projectsService.UpdateProject(dto, CurrentUserId());
         }
         
         [HttpPost("details/{id}")]

@@ -12,7 +12,7 @@ namespace IssueTracker.Services
     {
         Task<List<ProjectDto>> GetAllProjects();
         Task<int> AddProject(AddProjectDto dto, int userId);
-        Task<int> EditProject(UpdateProjectDto dto, int userId);
+        Task<int> UpdateProject(UpdateProjectDto dto, int userId);
         Task<ProjectDetailsDto> GetDetails(int id);
     }
 
@@ -101,7 +101,7 @@ namespace IssueTracker.Services
             return project.Id;
         }
 
-        public async Task<int> EditProject(UpdateProjectDto dto, int userId)
+        public async Task<int> UpdateProject(UpdateProjectDto dto, int userId)
         {
             await using var db = _contextFactory.Create();
 
