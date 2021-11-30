@@ -38,7 +38,6 @@
                     :avatar="`https://avatars.dicebear.com/api/initials/${element.userName}.svg`"
                     :reference="element.reference"
                 />
-<!--                :avatar="`https://avatars.dicebear.com/api/initials/${element.userName}.svg`"-->
               </div>
             </template>
             <template #footer>

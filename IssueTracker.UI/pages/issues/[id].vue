@@ -107,7 +107,7 @@ import {
   IssueDetailsDto,
   IssuesClient,
   IssueStatusDto,
-  IssueStatusesClient, UpdateIssueDto
+  IssueStatusesClient, UpdateIssueDto, UsersClient
 } from "~/src/services/api.generated.clients";
 import {ref} from "vue";
 import {useFetch} from "#app";
@@ -127,6 +127,10 @@ const init = async function (){
   const issuesClient = new IssuesClient();
   const issueDetails = await issuesClient.get(issueId)
   details.value = issueDetails;
+
+  const usersClient = new UsersClient();
+  await usersClient.usersForProject(issueDetails.projectId);
+  
   title.value = issueDetails.title
   description.value = issueDetails.description
 

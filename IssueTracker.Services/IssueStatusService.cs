@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IssueTracker.Data.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using NJsonSchema.Annotations;
 
 namespace IssueTracker.Services
 {
@@ -14,6 +15,7 @@ namespace IssueTracker.Services
     public class IssueStatusDto
     {
         public int Id { get; set; }
+        [NotNull]
         public string Name { get; set; }
     }
     

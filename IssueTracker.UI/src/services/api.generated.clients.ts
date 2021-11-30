@@ -702,6 +702,120 @@ export class ProjectsClient {
     }
 }
 
+export class UsersClient {
+    private instance = apiAxios;
+    // @ts-ignore
+    private baseUrl: string = appConfig.apiUrl
+
+    usersForProject(projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<ProjectUserDto[]> {
+        let url_ = this.baseUrl + "/api/Users/users-for-project?";
+        if (projectId === null)
+            throw new Error("The parameter 'projectId' cannot be null.");
+        else if (projectId !== undefined)
+            url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUsersForProject(_response);
+        });
+    }
+
+    protected processUsersForProject(response: AxiosResponse): Promise<ProjectUserDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ProjectUserDto.fromJS(item));
+            }
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ProjectUserDto[]>(<any>null);
+    }
+
+    addUserToProject(email?: string | null | undefined, projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<boolean> {
+        let url_ = this.baseUrl + "/api/Users/add-user-to-project?";
+        if (email !== undefined && email !== null)
+            url_ += "email=" + encodeURIComponent("" + email) + "&";
+        if (projectId === null)
+            throw new Error("The parameter 'projectId' cannot be null.");
+        else if (projectId !== undefined)
+            url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAddUserToProject(_response);
+        });
+    }
+
+    protected processAddUserToProject(response: AxiosResponse): Promise<boolean> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<boolean>(<any>null);
+    }
+}
+
 export class Client {
     private instance = apiAxios;
     // @ts-ignore
@@ -1161,7 +1275,7 @@ export interface IUpdateIssueDto {
 
 export class IssueStatusDto implements IIssueStatusDto {
     id!: number;
-    name!: string | undefined;
+    name!: string;
 
     constructor(data?: IIssueStatusDto) {
         if (data) {
@@ -1196,7 +1310,7 @@ export class IssueStatusDto implements IIssueStatusDto {
 
 export interface IIssueStatusDto {
     id: number;
-    name: string | undefined;
+    name: string;
 }
 
 export class ProjectDto implements IProjectDto {
@@ -1469,6 +1583,50 @@ export interface IProjectDetailsDto {
     id: number;
     name: string | undefined;
     abbreviation: string | undefined;
+}
+
+export class ProjectUserDto implements IProjectUserDto {
+    id!: number;
+    name!: string | undefined;
+    email!: string | undefined;
+
+    constructor(data?: IProjectUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.email = _data["email"];
+        }
+    }
+
+    static fromJS(data: any): ProjectUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProjectUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["email"] = this.email;
+        return data; 
+    }
+}
+
+export interface IProjectUserDto {
+    id: number;
+    name: string | undefined;
+    email: string | undefined;
 }
 
 export class WeatherForecast implements IWeatherForecast {
