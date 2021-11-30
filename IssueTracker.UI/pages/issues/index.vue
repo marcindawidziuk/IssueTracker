@@ -35,7 +35,7 @@
                     :key="element.id" 
                     :id="element.id"
                     :title="element.title"
-                    :avatar="`https://avatars.dicebear.com/api/initials/${element.userName}.svg`"
+                    :avatar="element.userName ? avatarUrl(element.userName) : null"
                     :reference="element.reference"
                 />
               </div>
@@ -68,6 +68,7 @@
 <script setup lang="ts">
 
 import draggable from "vuedraggable";
+import {avatarUrl} from '~/src/services/utils';
 import {IssueDto, IssuesClient, IssueStatusDto, IssueStatusesClient} from "~/src/services/api.generated.clients";
 import {ref, computed} from "vue";
 import IssueCard from "~/components/IssueCard.vue";

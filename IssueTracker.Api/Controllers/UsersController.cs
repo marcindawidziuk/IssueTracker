@@ -24,6 +24,5 @@ namespace IssueTracker.Api.Controllers
         {
             return await _usersService.AddUserToProject(email, projectId);
         }
-        
     }
 }

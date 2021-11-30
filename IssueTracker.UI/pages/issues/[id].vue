@@ -36,6 +36,22 @@
                     Assigned User
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
+                    <select v-model="selectedUserId" class="p-1 m-1">
+                      <option v-for="user in userDropdowns"
+                              :value="user.id">
+                        {{ user.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-6">
+                <div class="col-span-3 sm:col-span-2">
+                  <label for="company-website" class="block text-sm font-medium text-gray-700">
+                    Status
+                  </label>
+                  <div class="mt-1 flex rounded-md shadow-sm">
                     <select v-model="selectedStatus" class="p-1 m-1">
                       <option v-for="status in statuses"
                               :value="status">
@@ -107,14 +123,23 @@ import {
   IssueDetailsDto,
   IssuesClient,
   IssueStatusDto,
-  IssueStatusesClient, UpdateIssueDto, UsersClient
+  IssueStatusesClient, ProjectUserDto, UpdateIssueDto, UsersClient
 } from "~/src/services/api.generated.clients";
 import {ref} from "vue";
 import {useFetch} from "#app";
 
 const statuses = ref<IssueStatusDto[]>([])
 const selectedStatus = ref<IssueStatusDto>()
+const selectedUserId = ref<number | null>(null)
 
+const users = ref<ProjectUserDto[]>([])
+
+interface UserDropdownValue{
+  id: number | null;
+  name: string | null;
+  email: string | null;
+}
+const userDropdowns = ref<UserDropdownValue[]>([])
 const route = useRoute()
 const router = useRouter()
 const details = ref<IssueDetailsDto>()
@@ -129,7 +154,11 @@ const init = async function (){
   details.value = issueDetails;
 
   const usersClient = new UsersClient();
-  await usersClient.usersForProject(issueDetails.projectId);
+  users.value = await usersClient.usersForProject(issueDetails.projectId);
+  userDropdowns.value = users.value
+  userDropdowns.value.unshift({id: null, name: 'Unassigned'})
+  
+  selectedUserId.value = issueDetails.assignedUserId
   
   title.value = issueDetails.title
   description.value = issueDetails.description
@@ -142,11 +171,17 @@ const init = async function (){
 
 const save = async function (){
   try {
+    if (!details.value)
+      return;
+    if (!selectedStatus.value)
+      return;
+    
     const client = new IssuesClient();
     const dto = new UpdateIssueDto({
       id: details.value.id,
       title: title.value,
       text: description.value,
+      assignedUserId: selectedUserId.value ?? undefined,
       statusId: selectedStatus.value.id
     })
     await client.update(dto)

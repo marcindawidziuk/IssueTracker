@@ -31,8 +31,24 @@
 
               <div class="grid grid-cols-3 gap-6">
                 <div class="col-span-3 sm:col-span-2">
-                  <label for="company-website" class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700">
                     Assigned User
+                  </label>
+                  <div class="mt-1 flex rounded-md shadow-sm">
+                    <select v-model="selectedUserId" class="p-1 m-1">
+                      <option v-for="user in userDropdowns"
+                              :value="user.id">
+                        {{ user.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-6">
+                <div class="col-span-3 sm:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700">
+                    Status
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
                     <select v-model="selectedStatus" class="p-1 m-1">
@@ -101,7 +117,13 @@
 </template>
 
 <script setup lang="ts">
-import {AddIssueDto, IssuesClient, IssueStatusDto, IssueStatusesClient} from "~/src/services/api.generated.clients";
+import {
+  AddIssueDto,
+  IssuesClient,
+  IssueStatusDto,
+  IssueStatusesClient, ProjectUserDto,
+  UsersClient
+} from "~/src/services/api.generated.clients";
 import {ref} from "vue";
 
 const title = ref("")
@@ -112,18 +134,39 @@ const selectedStatus = ref<IssueStatusDto>()
 const route = useRoute()
 const router = useRouter()
 
+const selectedUserId = ref<number | null>(null)
+
+const users = ref<ProjectUserDto[]>([])
+
+interface UserDropdownValue{
+  id: number | null;
+  name: string | null;
+  email: string | null;
+}
+const userDropdowns = ref<UserDropdownValue[]>([])
+
 const init = async function (){
-  const projectId = route.query.projectId as number;
+  const projectId = parseInt(route.query.projectId as string);
   const client = new IssueStatusesClient()
   statuses.value = await client.getForProject(projectId)
   selectedStatus.value = statuses.value[0]
+
+  const usersClient = new UsersClient();
+  users.value = await usersClient.usersForProject(projectId);
+  userDropdowns.value = users.value
+  userDropdowns.value.unshift({id: null, name: 'Unassigned'})
 }
 
 const save = async function (){
   try {
-    const projectId = parseInt(route.query.projectId) as number;
+    if (!selectedStatus.value)
+      return;
+    
+    const projectId = parseInt(route.query.projectId as string) as number;
     const client = new IssuesClient();
     const dto = new AddIssueDto({
+      assignedUserId: selectedUserId.value,
+      description: description.value,
       projectId: projectId,
       title: title.value,
       text: description.value,

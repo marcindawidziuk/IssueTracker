@@ -6,7 +6,7 @@
           {{ title }}
         </router-link>
       </p>
-      <img :src="avatar" alt="Avatar" class="w-6 h-6 rounded-full ml-2" draggable="false">
+      <img v-if="avatar" :src="avatar" alt="Avatar" class="w-6 h-6 rounded-full ml-2" draggable="false">
     </div>
     <div class="flex mt-4 justify-between items-center">
       <span class="text-sm text-gray-600">{{ reference }}</span>

@@ -26,13 +26,13 @@ namespace IssueTracker.Api.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<int> AddIssue(AddIssueDto dto)
+        public async Task<int> AddIssue([FromBody] AddIssueDto dto)
         {
             return await _issuesService.AddIssue(dto, CurrentUserId());
         }
         
         [HttpPost("update")]
-        public async Task UpdateIssue(UpdateIssueDto dto)
+        public async Task UpdateIssue([FromBody] UpdateIssueDto dto)
         {
             await _issuesService.UpdateIssue(dto);
         }

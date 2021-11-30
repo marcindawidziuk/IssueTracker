@@ -875,8 +875,8 @@ export class Client {
 
 export class AccountInfoDto implements IAccountInfoDto {
     id!: number;
-    email!: string | undefined;
-    name!: string | undefined;
+    email!: string | null;
+    name!: string | null;
 
     constructor(data?: IAccountInfoDto) {
         if (data) {
@@ -889,9 +889,9 @@ export class AccountInfoDto implements IAccountInfoDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.email = _data["email"];
-            this.name = _data["name"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.email = _data["email"] !== undefined ? _data["email"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
         }
     }
 
@@ -904,22 +904,22 @@ export class AccountInfoDto implements IAccountInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["email"] = this.email;
-        data["name"] = this.name;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["email"] = this.email !== undefined ? this.email : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         return data; 
     }
 }
 
 export interface IAccountInfoDto {
     id: number;
-    email: string | undefined;
-    name: string | undefined;
+    email: string | null;
+    name: string | null;
 }
 
 export class LoginRequest implements ILoginRequest {
-    email!: string | undefined;
-    password!: string | undefined;
+    email!: string | null;
+    password!: string | null;
 
     constructor(data?: ILoginRequest) {
         if (data) {
@@ -932,8 +932,8 @@ export class LoginRequest implements ILoginRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.email = _data["email"];
-            this.password = _data["password"];
+            this.email = _data["email"] !== undefined ? _data["email"] : <any>null;
+            this.password = _data["password"] !== undefined ? _data["password"] : <any>null;
         }
     }
 
@@ -946,20 +946,20 @@ export class LoginRequest implements ILoginRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
-        data["password"] = this.password;
+        data["email"] = this.email !== undefined ? this.email : <any>null;
+        data["password"] = this.password !== undefined ? this.password : <any>null;
         return data; 
     }
 }
 
 export interface ILoginRequest {
-    email: string | undefined;
-    password: string | undefined;
+    email: string | null;
+    password: string | null;
 }
 
 export class ServiceReponse implements IServiceReponse {
     isSuccessful!: boolean;
-    errorMessage!: string | undefined;
+    errorMessage!: string | null;
 
     constructor(data?: IServiceReponse) {
         if (data) {
@@ -972,8 +972,8 @@ export class ServiceReponse implements IServiceReponse {
 
     init(_data?: any) {
         if (_data) {
-            this.isSuccessful = _data["isSuccessful"];
-            this.errorMessage = _data["errorMessage"];
+            this.isSuccessful = _data["isSuccessful"] !== undefined ? _data["isSuccessful"] : <any>null;
+            this.errorMessage = _data["errorMessage"] !== undefined ? _data["errorMessage"] : <any>null;
         }
     }
 
@@ -986,21 +986,21 @@ export class ServiceReponse implements IServiceReponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["isSuccessful"] = this.isSuccessful;
-        data["errorMessage"] = this.errorMessage;
+        data["isSuccessful"] = this.isSuccessful !== undefined ? this.isSuccessful : <any>null;
+        data["errorMessage"] = this.errorMessage !== undefined ? this.errorMessage : <any>null;
         return data; 
     }
 }
 
 export interface IServiceReponse {
     isSuccessful: boolean;
-    errorMessage: string | undefined;
+    errorMessage: string | null;
 }
 
 export class RegisterRequest implements IRegisterRequest {
-    name!: string | undefined;
-    email!: string | undefined;
-    password!: string | undefined;
+    name!: string | null;
+    email!: string | null;
+    password!: string | null;
 
     constructor(data?: IRegisterRequest) {
         if (data) {
@@ -1013,9 +1013,9 @@ export class RegisterRequest implements IRegisterRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.name = _data["name"];
-            this.email = _data["email"];
-            this.password = _data["password"];
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.email = _data["email"] !== undefined ? _data["email"] : <any>null;
+            this.password = _data["password"] !== undefined ? _data["password"] : <any>null;
         }
     }
 
@@ -1028,26 +1028,26 @@ export class RegisterRequest implements IRegisterRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["email"] = this.email;
-        data["password"] = this.password;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["email"] = this.email !== undefined ? this.email : <any>null;
+        data["password"] = this.password !== undefined ? this.password : <any>null;
         return data; 
     }
 }
 
 export interface IRegisterRequest {
-    name: string | undefined;
-    email: string | undefined;
-    password: string | undefined;
+    name: string | null;
+    email: string | null;
+    password: string | null;
 }
 
 export class IssueDetailsDto implements IIssueDetailsDto {
     id!: number;
-    reference!: string | undefined;
-    title!: string | undefined;
-    assignedUserId!: number | undefined;
+    reference!: string | null;
+    title!: string | null;
+    assignedUserId!: number | null;
     statusId!: number;
-    description!: string | undefined;
+    description!: string | null;
     createdByUserId!: number;
     projectId!: number;
 
@@ -1062,14 +1062,14 @@ export class IssueDetailsDto implements IIssueDetailsDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.reference = _data["reference"];
-            this.title = _data["title"];
-            this.assignedUserId = _data["assignedUserId"];
-            this.statusId = _data["statusId"];
-            this.description = _data["description"];
-            this.createdByUserId = _data["createdByUserId"];
-            this.projectId = _data["projectId"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.reference = _data["reference"] !== undefined ? _data["reference"] : <any>null;
+            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
+            this.assignedUserId = _data["assignedUserId"] !== undefined ? _data["assignedUserId"] : <any>null;
+            this.statusId = _data["statusId"] !== undefined ? _data["statusId"] : <any>null;
+            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
+            this.createdByUserId = _data["createdByUserId"] !== undefined ? _data["createdByUserId"] : <any>null;
+            this.projectId = _data["projectId"] !== undefined ? _data["projectId"] : <any>null;
         }
     }
 
@@ -1082,36 +1082,36 @@ export class IssueDetailsDto implements IIssueDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["reference"] = this.reference;
-        data["title"] = this.title;
-        data["assignedUserId"] = this.assignedUserId;
-        data["statusId"] = this.statusId;
-        data["description"] = this.description;
-        data["createdByUserId"] = this.createdByUserId;
-        data["projectId"] = this.projectId;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["reference"] = this.reference !== undefined ? this.reference : <any>null;
+        data["title"] = this.title !== undefined ? this.title : <any>null;
+        data["assignedUserId"] = this.assignedUserId !== undefined ? this.assignedUserId : <any>null;
+        data["statusId"] = this.statusId !== undefined ? this.statusId : <any>null;
+        data["description"] = this.description !== undefined ? this.description : <any>null;
+        data["createdByUserId"] = this.createdByUserId !== undefined ? this.createdByUserId : <any>null;
+        data["projectId"] = this.projectId !== undefined ? this.projectId : <any>null;
         return data; 
     }
 }
 
 export interface IIssueDetailsDto {
     id: number;
-    reference: string | undefined;
-    title: string | undefined;
-    assignedUserId: number | undefined;
+    reference: string | null;
+    title: string | null;
+    assignedUserId: number | null;
     statusId: number;
-    description: string | undefined;
+    description: string | null;
     createdByUserId: number;
     projectId: number;
 }
 
 export class IssueDto implements IIssueDto {
     id!: number;
-    reference!: string | undefined;
-    title!: string | undefined;
+    reference!: string | null;
+    title!: string | null;
     statusId!: number;
-    statusName!: string | undefined;
-    userName!: string | undefined;
+    statusName!: string | null;
+    userName!: string | null;
 
     constructor(data?: IIssueDto) {
         if (data) {
@@ -1124,12 +1124,12 @@ export class IssueDto implements IIssueDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.reference = _data["reference"];
-            this.title = _data["title"];
-            this.statusId = _data["statusId"];
-            this.statusName = _data["statusName"];
-            this.userName = _data["userName"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.reference = _data["reference"] !== undefined ? _data["reference"] : <any>null;
+            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
+            this.statusId = _data["statusId"] !== undefined ? _data["statusId"] : <any>null;
+            this.statusName = _data["statusName"] !== undefined ? _data["statusName"] : <any>null;
+            this.userName = _data["userName"] !== undefined ? _data["userName"] : <any>null;
         }
     }
 
@@ -1142,31 +1142,31 @@ export class IssueDto implements IIssueDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["reference"] = this.reference;
-        data["title"] = this.title;
-        data["statusId"] = this.statusId;
-        data["statusName"] = this.statusName;
-        data["userName"] = this.userName;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["reference"] = this.reference !== undefined ? this.reference : <any>null;
+        data["title"] = this.title !== undefined ? this.title : <any>null;
+        data["statusId"] = this.statusId !== undefined ? this.statusId : <any>null;
+        data["statusName"] = this.statusName !== undefined ? this.statusName : <any>null;
+        data["userName"] = this.userName !== undefined ? this.userName : <any>null;
         return data; 
     }
 }
 
 export interface IIssueDto {
     id: number;
-    reference: string | undefined;
-    title: string | undefined;
+    reference: string | null;
+    title: string | null;
     statusId: number;
-    statusName: string | undefined;
-    userName: string | undefined;
+    statusName: string | null;
+    userName: string | null;
 }
 
 export class AddIssueDto implements IAddIssueDto {
     projectId!: number;
-    title!: string | undefined;
-    description!: string | undefined;
-    text!: string | undefined;
-    assignedUserId!: number | undefined;
+    title!: string | null;
+    description!: string | null;
+    text!: string | null;
+    assignedUserId!: number | null;
     statusId!: number;
 
     constructor(data?: IAddIssueDto) {
@@ -1180,12 +1180,12 @@ export class AddIssueDto implements IAddIssueDto {
 
     init(_data?: any) {
         if (_data) {
-            this.projectId = _data["projectId"];
-            this.title = _data["title"];
-            this.description = _data["description"];
-            this.text = _data["text"];
-            this.assignedUserId = _data["assignedUserId"];
-            this.statusId = _data["statusId"];
+            this.projectId = _data["projectId"] !== undefined ? _data["projectId"] : <any>null;
+            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
+            this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
+            this.text = _data["text"] !== undefined ? _data["text"] : <any>null;
+            this.assignedUserId = _data["assignedUserId"] !== undefined ? _data["assignedUserId"] : <any>null;
+            this.statusId = _data["statusId"] !== undefined ? _data["statusId"] : <any>null;
         }
     }
 
@@ -1198,30 +1198,29 @@ export class AddIssueDto implements IAddIssueDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["projectId"] = this.projectId;
-        data["title"] = this.title;
-        data["description"] = this.description;
-        data["text"] = this.text;
-        data["assignedUserId"] = this.assignedUserId;
-        data["statusId"] = this.statusId;
+        data["projectId"] = this.projectId !== undefined ? this.projectId : <any>null;
+        data["title"] = this.title !== undefined ? this.title : <any>null;
+        data["description"] = this.description !== undefined ? this.description : <any>null;
+        data["text"] = this.text !== undefined ? this.text : <any>null;
+        data["assignedUserId"] = this.assignedUserId !== undefined ? this.assignedUserId : <any>null;
+        data["statusId"] = this.statusId !== undefined ? this.statusId : <any>null;
         return data; 
     }
 }
 
 export interface IAddIssueDto {
     projectId: number;
-    title: string | undefined;
-    description: string | undefined;
-    text: string | undefined;
-    assignedUserId: number | undefined;
+    title: string | null;
+    description: string | null;
+    text: string | null;
+    assignedUserId: number | null;
     statusId: number;
 }
 
 export class UpdateIssueDto implements IUpdateIssueDto {
-    projectId!: number;
-    title!: string | undefined;
-    text!: string | undefined;
-    assignedUserId!: number | undefined;
+    title!: string | null;
+    text!: string | null;
+    assignedUserId!: number | null;
     statusId!: number;
     id!: number;
 
@@ -1236,12 +1235,11 @@ export class UpdateIssueDto implements IUpdateIssueDto {
 
     init(_data?: any) {
         if (_data) {
-            this.projectId = _data["projectId"];
-            this.title = _data["title"];
-            this.text = _data["text"];
-            this.assignedUserId = _data["assignedUserId"];
-            this.statusId = _data["statusId"];
-            this.id = _data["id"];
+            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
+            this.text = _data["text"] !== undefined ? _data["text"] : <any>null;
+            this.assignedUserId = _data["assignedUserId"] !== undefined ? _data["assignedUserId"] : <any>null;
+            this.statusId = _data["statusId"] !== undefined ? _data["statusId"] : <any>null;
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
         }
     }
 
@@ -1254,21 +1252,19 @@ export class UpdateIssueDto implements IUpdateIssueDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["projectId"] = this.projectId;
-        data["title"] = this.title;
-        data["text"] = this.text;
-        data["assignedUserId"] = this.assignedUserId;
-        data["statusId"] = this.statusId;
-        data["id"] = this.id;
+        data["title"] = this.title !== undefined ? this.title : <any>null;
+        data["text"] = this.text !== undefined ? this.text : <any>null;
+        data["assignedUserId"] = this.assignedUserId !== undefined ? this.assignedUserId : <any>null;
+        data["statusId"] = this.statusId !== undefined ? this.statusId : <any>null;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
         return data; 
     }
 }
 
 export interface IUpdateIssueDto {
-    projectId: number;
-    title: string | undefined;
-    text: string | undefined;
-    assignedUserId: number | undefined;
+    title: string | null;
+    text: string | null;
+    assignedUserId: number | null;
     statusId: number;
     id: number;
 }
@@ -1288,8 +1284,8 @@ export class IssueStatusDto implements IIssueStatusDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
         }
     }
 
@@ -1302,8 +1298,8 @@ export class IssueStatusDto implements IIssueStatusDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         return data; 
     }
 }
@@ -1315,7 +1311,7 @@ export interface IIssueStatusDto {
 
 export class ProjectDto implements IProjectDto {
     id!: number;
-    name!: string | undefined;
+    name!: string | null;
 
     constructor(data?: IProjectDto) {
         if (data) {
@@ -1328,8 +1324,8 @@ export class ProjectDto implements IProjectDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
         }
     }
 
@@ -1342,21 +1338,21 @@ export class ProjectDto implements IProjectDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         return data; 
     }
 }
 
 export interface IProjectDto {
     id: number;
-    name: string | undefined;
+    name: string | null;
 }
 
 export class AddProjectDto implements IAddProjectDto {
-    name!: string | undefined;
-    abbreviation!: string | undefined;
-    statuses!: CreateIssueStatusDto[] | undefined;
+    name!: string | null;
+    abbreviation!: string | null;
+    statuses!: CreateIssueStatusDto[] | null;
 
     constructor(data?: IAddProjectDto) {
         if (data) {
@@ -1369,8 +1365,8 @@ export class AddProjectDto implements IAddProjectDto {
 
     init(_data?: any) {
         if (_data) {
-            this.name = _data["name"];
-            this.abbreviation = _data["abbreviation"];
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.abbreviation = _data["abbreviation"] !== undefined ? _data["abbreviation"] : <any>null;
             if (Array.isArray(_data["statuses"])) {
                 this.statuses = [] as any;
                 for (let item of _data["statuses"])
@@ -1388,8 +1384,8 @@ export class AddProjectDto implements IAddProjectDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["abbreviation"] = this.abbreviation;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["abbreviation"] = this.abbreviation !== undefined ? this.abbreviation : <any>null;
         if (Array.isArray(this.statuses)) {
             data["statuses"] = [];
             for (let item of this.statuses)
@@ -1400,14 +1396,14 @@ export class AddProjectDto implements IAddProjectDto {
 }
 
 export interface IAddProjectDto {
-    name: string | undefined;
-    abbreviation: string | undefined;
-    statuses: CreateIssueStatusDto[] | undefined;
+    name: string | null;
+    abbreviation: string | null;
+    statuses: CreateIssueStatusDto[] | null;
 }
 
 export class CreateIssueStatusDto implements ICreateIssueStatusDto {
     priority!: number;
-    name!: string | undefined;
+    name!: string | null;
 
     constructor(data?: ICreateIssueStatusDto) {
         if (data) {
@@ -1420,8 +1416,8 @@ export class CreateIssueStatusDto implements ICreateIssueStatusDto {
 
     init(_data?: any) {
         if (_data) {
-            this.priority = _data["priority"];
-            this.name = _data["name"];
+            this.priority = _data["priority"] !== undefined ? _data["priority"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
         }
     }
 
@@ -1434,22 +1430,22 @@ export class CreateIssueStatusDto implements ICreateIssueStatusDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["priority"] = this.priority;
-        data["name"] = this.name;
+        data["priority"] = this.priority !== undefined ? this.priority : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         return data; 
     }
 }
 
 export interface ICreateIssueStatusDto {
     priority: number;
-    name: string | undefined;
+    name: string | null;
 }
 
 export class UpdateProjectDto implements IUpdateProjectDto {
     id!: number;
-    name!: string | undefined;
-    abbreviation!: string | undefined;
-    statuses!: UpdateProjectStatusDto[] | undefined;
+    name!: string | null;
+    abbreviation!: string | null;
+    statuses!: UpdateProjectStatusDto[] | null;
 
     constructor(data?: IUpdateProjectDto) {
         if (data) {
@@ -1462,9 +1458,9 @@ export class UpdateProjectDto implements IUpdateProjectDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.abbreviation = _data["abbreviation"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.abbreviation = _data["abbreviation"] !== undefined ? _data["abbreviation"] : <any>null;
             if (Array.isArray(_data["statuses"])) {
                 this.statuses = [] as any;
                 for (let item of _data["statuses"])
@@ -1482,9 +1478,9 @@ export class UpdateProjectDto implements IUpdateProjectDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["abbreviation"] = this.abbreviation;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["abbreviation"] = this.abbreviation !== undefined ? this.abbreviation : <any>null;
         if (Array.isArray(this.statuses)) {
             data["statuses"] = [];
             for (let item of this.statuses)
@@ -1496,14 +1492,14 @@ export class UpdateProjectDto implements IUpdateProjectDto {
 
 export interface IUpdateProjectDto {
     id: number;
-    name: string | undefined;
-    abbreviation: string | undefined;
-    statuses: UpdateProjectStatusDto[] | undefined;
+    name: string | null;
+    abbreviation: string | null;
+    statuses: UpdateProjectStatusDto[] | null;
 }
 
 export class UpdateProjectStatusDto implements IUpdateProjectStatusDto {
-    id!: number | undefined;
-    name!: string | undefined;
+    id!: number | null;
+    name!: string | null;
 
     constructor(data?: IUpdateProjectStatusDto) {
         if (data) {
@@ -1516,8 +1512,8 @@ export class UpdateProjectStatusDto implements IUpdateProjectStatusDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
         }
     }
 
@@ -1530,21 +1526,21 @@ export class UpdateProjectStatusDto implements IUpdateProjectStatusDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
         return data; 
     }
 }
 
 export interface IUpdateProjectStatusDto {
-    id: number | undefined;
-    name: string | undefined;
+    id: number | null;
+    name: string | null;
 }
 
 export class ProjectDetailsDto implements IProjectDetailsDto {
     id!: number;
-    name!: string | undefined;
-    abbreviation!: string | undefined;
+    name!: string | null;
+    abbreviation!: string | null;
 
     constructor(data?: IProjectDetailsDto) {
         if (data) {
@@ -1557,9 +1553,9 @@ export class ProjectDetailsDto implements IProjectDetailsDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.abbreviation = _data["abbreviation"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.abbreviation = _data["abbreviation"] !== undefined ? _data["abbreviation"] : <any>null;
         }
     }
 
@@ -1572,23 +1568,23 @@ export class ProjectDetailsDto implements IProjectDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["abbreviation"] = this.abbreviation;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["abbreviation"] = this.abbreviation !== undefined ? this.abbreviation : <any>null;
         return data; 
     }
 }
 
 export interface IProjectDetailsDto {
     id: number;
-    name: string | undefined;
-    abbreviation: string | undefined;
+    name: string | null;
+    abbreviation: string | null;
 }
 
 export class ProjectUserDto implements IProjectUserDto {
     id!: number;
-    name!: string | undefined;
-    email!: string | undefined;
+    name!: string | null;
+    email!: string | null;
 
     constructor(data?: IProjectUserDto) {
         if (data) {
@@ -1601,9 +1597,9 @@ export class ProjectUserDto implements IProjectUserDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.email = _data["email"];
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.email = _data["email"] !== undefined ? _data["email"] : <any>null;
         }
     }
 
@@ -1616,24 +1612,24 @@ export class ProjectUserDto implements IProjectUserDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["email"] = this.email;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["email"] = this.email !== undefined ? this.email : <any>null;
         return data; 
     }
 }
 
 export interface IProjectUserDto {
     id: number;
-    name: string | undefined;
-    email: string | undefined;
+    name: string | null;
+    email: string | null;
 }
 
 export class WeatherForecast implements IWeatherForecast {
     date!: Date;
     temperatureC!: number;
     temperatureF!: number;
-    summary!: string | undefined;
+    summary!: string | null;
 
     constructor(data?: IWeatherForecast) {
         if (data) {
@@ -1646,10 +1642,10 @@ export class WeatherForecast implements IWeatherForecast {
 
     init(_data?: any) {
         if (_data) {
-            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
-            this.temperatureC = _data["temperatureC"];
-            this.temperatureF = _data["temperatureF"];
-            this.summary = _data["summary"];
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>null;
+            this.temperatureC = _data["temperatureC"] !== undefined ? _data["temperatureC"] : <any>null;
+            this.temperatureF = _data["temperatureF"] !== undefined ? _data["temperatureF"] : <any>null;
+            this.summary = _data["summary"] !== undefined ? _data["summary"] : <any>null;
         }
     }
 
@@ -1662,10 +1658,10 @@ export class WeatherForecast implements IWeatherForecast {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["temperatureC"] = this.temperatureC;
-        data["temperatureF"] = this.temperatureF;
-        data["summary"] = this.summary;
+        data["date"] = this.date ? this.date.toISOString() : <any>null;
+        data["temperatureC"] = this.temperatureC !== undefined ? this.temperatureC : <any>null;
+        data["temperatureF"] = this.temperatureF !== undefined ? this.temperatureF : <any>null;
+        data["summary"] = this.summary !== undefined ? this.summary : <any>null;
         return data; 
     }
 }
@@ -1674,7 +1670,7 @@ export interface IWeatherForecast {
     date: Date;
     temperatureC: number;
     temperatureF: number;
-    summary: string | undefined;
+    summary: string | null;
 }
 
 export class ApiException extends Error {

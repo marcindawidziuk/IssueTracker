@@ -62,7 +62,7 @@
       "promiseType": "Promise",
       "httpClass": "HttpClient",
       "dateTimeType": "Date",
-      "nullValue": "Undefined",
+      "nullValue": "Null",
       "generateClientClasses": true,
       "generateClientInterfaces": false,
       "generateOptionalParameters": true,
