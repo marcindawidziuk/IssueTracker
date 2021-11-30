@@ -43,6 +43,7 @@
             <template #item="{ element }">
               <div class="list-group-item">
                 <IssueCard 
+                    @self-assign="selfAssignIssue(element)"
                     :key="element.id" 
                     :id="element.id"
                     :title="element.title"
@@ -84,6 +85,7 @@ import {IssueDto, IssuesClient, IssueStatusDto, IssueStatusesClient} from "~/src
 import {ref, computed} from "vue";
 import IssueCard from "~/components/IssueCard.vue";
 import {IssuesByColumn} from "~/src/services/issuesByColumn";
+import {userStore} from "~/stores/userStore";
 
 const route = useRoute()
 
@@ -151,6 +153,19 @@ const onChange = async function(status: IssueStatusDto, arg: any){
   
   const client = new IssuesClient();
   await client.updateStatus(addedIssue.id, status.id);
+}
+
+const selfAssignIssue = async function(issue: IssueDto){
+  try {
+    const client = new IssuesClient();
+    await client.assignToMyself(issue.id);
+    issue.assignedUserId = userStore.getState().user!.id
+    issue.userName = userStore.getState().user!.name
+  } catch (e) {
+    console.log("Failed self assigning issue", e)
+    alert("Failed self assigning issue")
+  }
+
 }
 
 onMounted(() => {

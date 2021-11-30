@@ -15,6 +15,7 @@ namespace IssueTracker.Services
         Task UpdateIssue(UpdateIssueDto dto);
         Task UpdateIssueStatus(int id, int issueStatusId);
         Task<IssueDetailsDto> GetIssue(int id);
+        Task AssignToUser(int issueId, int currentUserId);
     }
 
     public class IssueDetailsDto
@@ -154,6 +155,17 @@ namespace IssueTracker.Services
                     ProjectId = x.ProjectId
                 })
                 .SingleAsync(a => a.Id == id);
+        }
+
+        public async Task AssignToUser(int issueId, int currentUserId)
+        {
+            await using var db = _contextFactory.Create();
+
+            var issue = await db.Issues.Where(x => x.Id == issueId)
+                .SingleAsync();
+
+            issue.AssignedUserId = currentUserId;
+            await db.SaveChangesAsync();
         }
     }
 }

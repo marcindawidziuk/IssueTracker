@@ -42,5 +42,11 @@ namespace IssueTracker.Api.Controllers
         {
             await _issuesService.UpdateIssueStatus(issueId, issueStatusId);
         }
+        
+        [HttpPost("assign-to-myself")]
+        public async Task AssignToMyself(int issueId)
+        {
+            await _issuesService.AssignToUser(issueId, CurrentUserId());
+        }
     }
 }
