@@ -13,9 +13,20 @@
         </span>
     </router-link>
 
+    <div class="flex -space-x-1 overflow-hidden mt-2 ml-3">
+      <img v-for="user in userDropdowns" 
+           @click="filterByUser(user)"
+           class="inline-block h-6 w-6 rounded-full ring-2" 
+           :class="filterUser === user ? 'ring-gray-500' : 'ring-white' "
+           :src="avatarUrl(user.name)" 
+           :title="user.name"
+           :alt="user.name">
+    </div>
+
+
     <div class="min-h-screen flex overflow-x-scroll py-5">
 
-      <div v-for="column in issuesByColumn" class="bg-gray-100 rounded-lg px-3 py-3 column-width rounded mr-4 min-w-[250px] h-full">
+      <div v-for="column in issuesByColumn" class="bg-gray-100 rounded-lg px-3 py-3 column-width rounded mr-4 min-w-[300px] h-full">
         <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ column.status.name }}</p>
           <draggable
               v-model="column.issues"
@@ -68,7 +79,7 @@
 <script setup lang="ts">
 
 import draggable from "vuedraggable";
-import {avatarUrl} from '~/src/services/utils';
+import {avatarUrl, loadUserDropdowns, UserDropdownValue} from '~/src/services/utils';
 import {IssueDto, IssuesClient, IssueStatusDto, IssueStatusesClient} from "~/src/services/api.generated.clients";
 import {ref, computed} from "vue";
 import IssueCard from "~/components/IssueCard.vue";
@@ -81,8 +92,40 @@ const issues = ref<IssueDto[]>()
 
 const issuesByColumn = ref<IssuesByColumn[]>()
 
+const refreshIssuesByColumn = function (){
+  console.log('refreshing columns')
+    const i: IssuesByColumn[] = []
+    statuses.value?.forEach(x => {
+      i.push({
+        status: x,
+        issues: filteredIssues.value!.filter(a => a.statusId == x.id)
+      })
+    })
+    issuesByColumn.value = i;
+}
+
+
+const userDropdowns = ref<UserDropdownValue[]>([])
+const filterUser = ref<UserDropdownValue | null>(null)
+watch(filterUser, () => {
+  refreshIssuesByColumn()
+})
+
 const projectId = computed(() => {
   return parseInt(route.query.projectId as unknown as string)
+})
+
+const filterByUser = async function(user: UserDropdownValue){
+  if (filterUser.value === user)
+    filterUser.value = null
+  else
+    filterUser.value = user
+}
+
+const filteredIssues = computed(function () {
+  if (filterUser.value)
+    return issues.value?.filter(x => x.assignedUserId == filterUser.value?.id);
+  return issues.value
 })
 
 const init = async function (){
@@ -93,16 +136,8 @@ const init = async function (){
 
     const projectsClient = new IssueStatusesClient();
     statuses.value = await projectsClient.getForProject(projectId)
-    
-    const i: IssuesByColumn[] = []
-    statuses.value?.forEach(x => {
-      i.push({
-        status: x,
-        issues: issues.value!.filter(a => a.statusId == x.id)
-      })
-    })
-    
-    issuesByColumn.value = i
+    userDropdowns.value = await loadUserDropdowns(projectId)
+    refreshIssuesByColumn()
   } catch (e) {
     console.log("Failed loading the board", e)
     alert("Failed loading the board")

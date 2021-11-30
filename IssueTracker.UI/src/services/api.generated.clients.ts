@@ -1111,6 +1111,7 @@ export class IssueDto implements IIssueDto {
     title!: string | null;
     statusId!: number;
     statusName!: string | null;
+    assignedUserId!: number | null;
     userName!: string | null;
 
     constructor(data?: IIssueDto) {
@@ -1129,6 +1130,7 @@ export class IssueDto implements IIssueDto {
             this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
             this.statusId = _data["statusId"] !== undefined ? _data["statusId"] : <any>null;
             this.statusName = _data["statusName"] !== undefined ? _data["statusName"] : <any>null;
+            this.assignedUserId = _data["assignedUserId"] !== undefined ? _data["assignedUserId"] : <any>null;
             this.userName = _data["userName"] !== undefined ? _data["userName"] : <any>null;
         }
     }
@@ -1147,6 +1149,7 @@ export class IssueDto implements IIssueDto {
         data["title"] = this.title !== undefined ? this.title : <any>null;
         data["statusId"] = this.statusId !== undefined ? this.statusId : <any>null;
         data["statusName"] = this.statusName !== undefined ? this.statusName : <any>null;
+        data["assignedUserId"] = this.assignedUserId !== undefined ? this.assignedUserId : <any>null;
         data["userName"] = this.userName !== undefined ? this.userName : <any>null;
         return data; 
     }
@@ -1158,6 +1161,7 @@ export interface IIssueDto {
     title: string | null;
     statusId: number;
     statusName: string | null;
+    assignedUserId: number | null;
     userName: string | null;
 }
 

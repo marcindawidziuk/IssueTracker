@@ -127,6 +127,7 @@ import {
 } from "~/src/services/api.generated.clients";
 import {ref} from "vue";
 import {useFetch} from "#app";
+import {loadUserDropdowns, UserDropdownValue} from "~/src/services/utils";
 
 const statuses = ref<IssueStatusDto[]>([])
 const selectedStatus = ref<IssueStatusDto>()
@@ -134,11 +135,6 @@ const selectedUserId = ref<number | null>(null)
 
 const users = ref<ProjectUserDto[]>([])
 
-interface UserDropdownValue{
-  id: number | null;
-  name: string | null;
-  email: string | null;
-}
 const userDropdowns = ref<UserDropdownValue[]>([])
 const route = useRoute()
 const router = useRouter()
@@ -153,10 +149,7 @@ const init = async function (){
   const issueDetails = await issuesClient.get(issueId)
   details.value = issueDetails;
 
-  const usersClient = new UsersClient();
-  users.value = await usersClient.usersForProject(issueDetails.projectId);
-  userDropdowns.value = users.value
-  userDropdowns.value.unshift({id: null, name: 'Unassigned'})
+  userDropdowns.value = await loadUserDropdowns(issueDetails.projectId)
   
   selectedUserId.value = issueDetails.assignedUserId
   

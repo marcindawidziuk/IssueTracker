@@ -36,6 +36,7 @@ namespace IssueTracker.Services
         public string Title { get; set; }
         public int StatusId { get; set; }
         public string StatusName { get; set; }
+        public int? AssignedUserId { get; set; }
         public string UserName { get; set; }
     }
 
@@ -80,6 +81,7 @@ namespace IssueTracker.Services
                     Title = x.Title,
                     StatusId = x.IssueStatusId,
                     StatusName = x.IssueStatus.Name,
+                    AssignedUserId = x.AssignedUserId,
                     UserName = x.AssignedUser.Name
                 }).ToListAsync();
 
