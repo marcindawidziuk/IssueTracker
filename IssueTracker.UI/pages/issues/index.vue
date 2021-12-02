@@ -187,7 +187,19 @@ const init = async function (){
 }
 
 const onChange = async function(status: IssueStatusDto, arg: any){
+  console.log('onChange', arg)
   const addedIssue =  arg.added?.element as IssueDto
+  const moved =  arg.moved?.element as IssueDto
+  if (moved){
+    const status = moved.statusId
+    const column = issuesByColumn.value!.filter(x => x.status.id == status)[0]
+    const issuesForStatus = column.issues
+    const client = new IssuesClient();
+    await new Promise(f => setTimeout(f, 1000));
+    await client.reorderIssues(issuesForStatus.map(x => x.id));
+    return;
+  }
+  console.log('moved', moved)
   if (!addedIssue)
     return;
   

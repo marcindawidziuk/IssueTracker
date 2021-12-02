@@ -48,5 +48,11 @@ namespace IssueTracker.Api.Controllers
         {
             await _issuesService.AssignToUser(issueId, CurrentUserId());
         }
+
+        [HttpPost("reorder-issues")]
+        public async Task ReorderIssues([FromBody] List<int> issueIds)
+        {
+            await _issuesService.ReorderIssues(issueIds);
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace IssueTracker.Services
         Task UpdateIssueStatus(int id, int issueStatusId);
         Task<IssueDetailsDto> GetIssue(int id);
         Task AssignToUser(int issueId, int currentUserId);
+        Task ReorderIssues(List<int> issueIds);
     }
 
     public class IssueDetailsDto
@@ -80,6 +81,8 @@ namespace IssueTracker.Services
 
             return await db.Issues
                 .Where(x => x.ProjectId == projectId)
+                .OrderBy(x => x.Priority)
+                .ThenBy(x => x.Id)
                 .Select(x => new IssueDto
                 {
                     Id = x.Id,
@@ -204,6 +207,24 @@ namespace IssueTracker.Services
                 .SingleAsync();
 
             issue.AssignedUserId = currentUserId;
+            await db.SaveChangesAsync();
+        }
+
+        public async Task ReorderIssues(List<int> issueIds)
+        {
+            await using var db = _contextFactory.Create();
+
+            var issues = await db.Issues
+                .Where(x => issueIds.Contains(x.Id))
+                .ToListAsync();
+
+            var i = 0;
+            foreach (var id in issueIds)
+            {
+                var issue = issues.Single(x => x.Id == id);
+                issue.Priority = ++i;
+            }
+
             await db.SaveChangesAsync();
         }
     }
