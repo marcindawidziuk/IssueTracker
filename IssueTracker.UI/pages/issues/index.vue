@@ -23,6 +23,17 @@
            :alt="user.name">
     </div>
 
+    <div class="flex -space-x-1 overflow-hidden mt-2 ml-3">
+      <div v-for="label in labels" 
+           @click="filterByLabel(label)"
+           :class="filterLabel === label ? 'ring-2 ring-red-800' : ''"
+           class="px-3 h-6 rounded-full text-xs font-semibold flex items-center bg-red-100 text-red-800 m-1">
+        <span :class="filterLabel === label ? 'ring-2 ring-red' : ''" 
+              class="w-2 h-2 rounded-full mr-1 bg-red-400"></span>
+        <span>{{ label.name }}</span>
+      </div>
+    </div>
+
 
     <div class="min-h-screen flex overflow-x-scroll py-5">
 
@@ -82,8 +93,14 @@
 
 import draggable from "vuedraggable";
 import {avatarUrl, loadUserDropdowns, UserDropdownValue} from '~/src/services/utils';
-import {IssueDto, IssuesClient, IssueStatusDto, IssueStatusesClient} from "~/src/services/api.generated.clients";
-import {ref, computed} from "vue";
+import {
+  IssueDto,
+  IssuesClient,
+  IssueStatusDto,
+  IssueStatusesClient,
+  LabelDto, LabelsClient
+} from "~/src/services/api.generated.clients";
+import {ref, computed, watch} from "vue";
 import IssueCard from "~/components/IssueCard.vue";
 import {IssuesByColumn} from "~/src/services/issuesByColumn";
 import {userStore} from "~/stores/userStore";
@@ -114,10 +131,6 @@ watch(filterUser, () => {
   refreshIssuesByColumn()
 })
 
-const projectId = computed(() => {
-  return parseInt(route.query.projectId as unknown as string)
-})
-
 const filterByUser = async function(user: UserDropdownValue){
   if (filterUser.value === user)
     filterUser.value = null
@@ -125,10 +138,33 @@ const filterByUser = async function(user: UserDropdownValue){
     filterUser.value = user
 }
 
+const filterLabel = ref<LabelDto | null>(null)
+const labels = ref<LabelDto[]>([])
+watch(filterLabel, () => {
+  refreshIssuesByColumn()
+})
+
+const filterByLabel = async function(label: LabelDto){
+  if (filterLabel.value === label)
+    filterLabel.value = null
+  else
+    filterLabel.value = label
+}
+
+const projectId = computed(() => {
+  return parseInt(route.query.projectId as unknown as string)
+})
+
+
 const filteredIssues = computed(function () {
+  if (!issues.value)
+    return []
+  let issuesList = issues.value
   if (filterUser.value)
-    return issues.value?.filter(x => x.assignedUserId == filterUser.value?.id);
-  return issues.value
+    issuesList = issuesList.filter(x => x.assignedUserId == filterUser.value?.id);
+  if (filterLabel.value)
+    issuesList = issuesList.filter(x => x.labels!.some(l => l.id === filterLabel.value?.id));
+  return issuesList
 })
 
 const init = async function (){
@@ -140,6 +176,9 @@ const init = async function (){
     const projectsClient = new IssueStatusesClient();
     statuses.value = await projectsClient.getForProject(projectId)
     userDropdowns.value = await loadUserDropdowns(projectId)
+    const labelsClient = new LabelsClient()
+    labels.value = await labelsClient.labelsForProject(projectId)
+    
     refreshIssuesByColumn()
   } catch (e) {
     console.log("Failed loading the board", e)
