@@ -44,6 +44,7 @@
               <div class="list-group-item">
                 <IssueCard 
                     @self-assign="selfAssignIssue(element)"
+                    :labels="element.labels"
                     :key="element.id" 
                     :id="element.id"
                     :title="element.title"

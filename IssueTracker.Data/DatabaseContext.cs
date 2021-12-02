@@ -14,7 +14,7 @@ namespace IssueTracker.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectUserMappings> ProjectUserMappings { get; set; }
         public DbSet<Label> Labels { get; set; }
-        public DbSet<LabelIssueMapping> ExercisePlanMappings { get; set; }
+        public DbSet<LabelIssueMapping> LabelIssueMappings { get; set; }
     }
     
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext> 

@@ -1,7 +1,7 @@
 ﻿<template>
   <div v-if="details">
     
-    <TabbedContent :tabs="['Details', 'Users']">
+    <TabbedContent :tabs="['Details', 'Users', 'Labels']">
       <template v-slot:tab-1> 
         <div class="md:grid md:grid-cols-3 md:gap-6">
           <div class="mt-5 md:mt-0 md:col-span-2">
@@ -146,7 +146,21 @@
           </button>
         </div>
       </template>
-      
+
+      <template v-slot:tab-3>
+        <div class="p-2">
+          Labels:
+          <ul class="my-2">
+            <li v-for="label in labels">
+              {{ label.name }}
+            </li>
+          </ul>
+          <button @click="addLabel()" class="bg-gray-500 text-white p-2 my-2">
+            Add label
+          </button>
+        </div>
+      </template>
+
     </TabbedContent>
 
     
@@ -159,7 +173,8 @@ import draggable from "vuedraggable";
 import {avatarUrl} from '~/src/services/utils';
 import {computed, ref} from "vue";
 import {
-  IssueStatusesClient,
+  AddLabelDto,
+  IssueStatusesClient, LabelDto, LabelsClient,
   ProjectDetailsDto,
   ProjectsClient,
   ProjectUserDto,
@@ -229,6 +244,8 @@ const deleteStatus = function (status: IssueStatusViewModel) {
     statuses.value = statuses.value.filter(x => x !== status)
 }
 
+const labels = ref<LabelDto[]>([])
+
 const init = async function () {
   try {
     const client = new ProjectsClient();
@@ -239,11 +256,34 @@ const init = async function () {
 
     const usersClient = new UsersClient();
     users.value = await usersClient.usersForProject(projectId.value)
+    
+    const labelClient = new LabelsClient();
+    labels.value = await labelClient.labelsForProject(projectId.value)
 
   } catch (e) {
     console.log("Failed loading project", e)
     alert("Failed loading project")
   }
+}
+
+const addLabel = async function(){
+  try {
+    const labelName = prompt("Enter label name")
+    if (!labelName)
+      return;
+    
+    const labelClient = new LabelsClient();
+    const dto = new AddLabelDto({
+      projectId: projectId.value,
+      name: labelName
+    });
+    await labelClient.add(dto)
+    await init();
+  } catch (e) {
+    console.log("Failed adding label", e)
+    alert("Failed adding label")
+  }
+
 }
 
 onMounted(() => init())

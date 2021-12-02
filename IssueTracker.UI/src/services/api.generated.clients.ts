@@ -11,6 +11,222 @@ import axios, { AxiosError, AxiosStatic, AxiosRequestConfig, AxiosResponse, Canc
 import appConfig from "../../appConfig";
 import {apiAxios} from "./ApiAxios";
 
+export class LabelsClient {
+    private instance = apiAxios;
+    // @ts-ignore
+    private baseUrl: string = appConfig.apiUrl
+
+    labelsForProject(projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<LabelDto[]> {
+        let url_ = this.baseUrl + "/api/Labels/labels-for-project?";
+        if (projectId === null)
+            throw new Error("The parameter 'projectId' cannot be null.");
+        else if (projectId !== undefined)
+            url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLabelsForProject(_response);
+        });
+    }
+
+    protected processLabelsForProject(response: AxiosResponse): Promise<LabelDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LabelDto.fromJS(item));
+            }
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<LabelDto[]>(<any>null);
+    }
+
+    searchLabelsForProject(projectId?: number | undefined, searchTerm?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<LabelDto[]> {
+        let url_ = this.baseUrl + "/api/Labels/search-labels-for-project?";
+        if (projectId === null)
+            throw new Error("The parameter 'projectId' cannot be null.");
+        else if (projectId !== undefined)
+            url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
+        if (searchTerm !== undefined && searchTerm !== null)
+            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processSearchLabelsForProject(_response);
+        });
+    }
+
+    protected processSearchLabelsForProject(response: AxiosResponse): Promise<LabelDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LabelDto.fromJS(item));
+            }
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<LabelDto[]>(<any>null);
+    }
+
+    add(dto: AddLabelDto , cancelToken?: CancelToken | undefined): Promise<number> {
+        let url_ = this.baseUrl + "/api/Labels/add";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processAdd(_response);
+        });
+    }
+
+    protected processAdd(response: AxiosResponse): Promise<number> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<number>(<any>null);
+    }
+
+    update(dto: UpdateLabelDto , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Labels/update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dto);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
 export class AccountClient {
     private instance = apiAxios;
     // @ts-ignore
@@ -920,6 +1136,126 @@ export class Client {
     }
 }
 
+export class LabelDto implements ILabelDto {
+    id!: number;
+    name!: string | null;
+
+    constructor(data?: ILabelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LabelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        return data; 
+    }
+}
+
+export interface ILabelDto {
+    id: number;
+    name: string | null;
+}
+
+export class AddLabelDto implements IAddLabelDto {
+    projectId!: number;
+    name!: string | null;
+
+    constructor(data?: IAddLabelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.projectId = _data["projectId"] !== undefined ? _data["projectId"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): AddLabelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddLabelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["projectId"] = this.projectId !== undefined ? this.projectId : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        return data; 
+    }
+}
+
+export interface IAddLabelDto {
+    projectId: number;
+    name: string | null;
+}
+
+export class UpdateLabelDto implements IUpdateLabelDto {
+    id!: number;
+    name!: string | null;
+
+    constructor(data?: IUpdateLabelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): UpdateLabelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLabelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        return data; 
+    }
+}
+
+export interface IUpdateLabelDto {
+    id: number;
+    name: string | null;
+}
+
 export class AccountInfoDto implements IAccountInfoDto {
     id!: number;
     email!: string | null;
@@ -1097,6 +1433,7 @@ export class IssueDetailsDto implements IIssueDetailsDto {
     description!: string | null;
     createdByUserId!: number;
     projectId!: number;
+    labels!: LabelDto[];
 
     constructor(data?: IIssueDetailsDto) {
         if (data) {
@@ -1117,6 +1454,11 @@ export class IssueDetailsDto implements IIssueDetailsDto {
             this.description = _data["description"] !== undefined ? _data["description"] : <any>null;
             this.createdByUserId = _data["createdByUserId"] !== undefined ? _data["createdByUserId"] : <any>null;
             this.projectId = _data["projectId"] !== undefined ? _data["projectId"] : <any>null;
+            if (Array.isArray(_data["labels"])) {
+                this.labels = [] as any;
+                for (let item of _data["labels"])
+                    this.labels!.push(LabelDto.fromJS(item));
+            }
         }
     }
 
@@ -1137,6 +1479,11 @@ export class IssueDetailsDto implements IIssueDetailsDto {
         data["description"] = this.description !== undefined ? this.description : <any>null;
         data["createdByUserId"] = this.createdByUserId !== undefined ? this.createdByUserId : <any>null;
         data["projectId"] = this.projectId !== undefined ? this.projectId : <any>null;
+        if (Array.isArray(this.labels)) {
+            data["labels"] = [];
+            for (let item of this.labels)
+                data["labels"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -1150,6 +1497,7 @@ export interface IIssueDetailsDto {
     description: string | null;
     createdByUserId: number;
     projectId: number;
+    labels: LabelDto[];
 }
 
 export class IssueDto implements IIssueDto {
@@ -1160,6 +1508,7 @@ export class IssueDto implements IIssueDto {
     statusName!: string | null;
     assignedUserId!: number | null;
     userName!: string | null;
+    labels!: LabelDto[] | null;
 
     constructor(data?: IIssueDto) {
         if (data) {
@@ -1179,6 +1528,11 @@ export class IssueDto implements IIssueDto {
             this.statusName = _data["statusName"] !== undefined ? _data["statusName"] : <any>null;
             this.assignedUserId = _data["assignedUserId"] !== undefined ? _data["assignedUserId"] : <any>null;
             this.userName = _data["userName"] !== undefined ? _data["userName"] : <any>null;
+            if (Array.isArray(_data["labels"])) {
+                this.labels = [] as any;
+                for (let item of _data["labels"])
+                    this.labels!.push(LabelDto.fromJS(item));
+            }
         }
     }
 
@@ -1198,6 +1552,11 @@ export class IssueDto implements IIssueDto {
         data["statusName"] = this.statusName !== undefined ? this.statusName : <any>null;
         data["assignedUserId"] = this.assignedUserId !== undefined ? this.assignedUserId : <any>null;
         data["userName"] = this.userName !== undefined ? this.userName : <any>null;
+        if (Array.isArray(this.labels)) {
+            data["labels"] = [];
+            for (let item of this.labels)
+                data["labels"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -1210,6 +1569,7 @@ export interface IIssueDto {
     statusName: string | null;
     assignedUserId: number | null;
     userName: string | null;
+    labels: LabelDto[] | null;
 }
 
 export class AddIssueDto implements IAddIssueDto {
@@ -1274,6 +1634,7 @@ export class UpdateIssueDto implements IUpdateIssueDto {
     assignedUserId!: number | null;
     statusId!: number;
     id!: number;
+    labelIds!: number[] | null;
 
     constructor(data?: IUpdateIssueDto) {
         if (data) {
@@ -1291,6 +1652,11 @@ export class UpdateIssueDto implements IUpdateIssueDto {
             this.assignedUserId = _data["assignedUserId"] !== undefined ? _data["assignedUserId"] : <any>null;
             this.statusId = _data["statusId"] !== undefined ? _data["statusId"] : <any>null;
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            if (Array.isArray(_data["labelIds"])) {
+                this.labelIds = [] as any;
+                for (let item of _data["labelIds"])
+                    this.labelIds!.push(item);
+            }
         }
     }
 
@@ -1308,6 +1674,11 @@ export class UpdateIssueDto implements IUpdateIssueDto {
         data["assignedUserId"] = this.assignedUserId !== undefined ? this.assignedUserId : <any>null;
         data["statusId"] = this.statusId !== undefined ? this.statusId : <any>null;
         data["id"] = this.id !== undefined ? this.id : <any>null;
+        if (Array.isArray(this.labelIds)) {
+            data["labelIds"] = [];
+            for (let item of this.labelIds)
+                data["labelIds"].push(item);
+        }
         return data; 
     }
 }
@@ -1318,6 +1689,7 @@ export interface IUpdateIssueDto {
     assignedUserId: number | null;
     statusId: number;
     id: number;
+    labelIds: number[] | null;
 }
 
 export class IssueStatusDto implements IIssueStatusDto {

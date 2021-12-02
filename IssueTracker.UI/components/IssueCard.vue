@@ -21,16 +21,17 @@
     </div>
     <div class="flex mt-4 justify-between items-center">
       <span class="text-sm text-gray-600">{{ reference }}</span>
-      <div class="px-3 h-6 rounded-full text-xs font-semibold flex items-center bg-red-100 text-red-800">
+      <div v-for="label in labels" class="px-3 h-6 rounded-full text-xs font-semibold flex items-center bg-red-100 text-red-800">
         <span class="w-2 h-2 rounded-full mr-1 bg-red-400"></span>
-        <span>{{ tagName ?? "Bug" }}</span>
+        <span>{{ label.name }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {PropType, ref} from "vue";
+import {LabelDto} from "~/src/services/api.generated.clients";
 
 defineProps({
   id: {
@@ -55,6 +56,10 @@ defineProps({
   reference: {
     type: String,
     required: true
+  },
+  labels: {
+    type: Array as PropType<LabelDto[]>,
+    default: []
   }
 })
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IssueTracker.Data;
 using IssueTracker.Data.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using NJsonSchema.Annotations;
 
 namespace IssueTracker.Services
 {
@@ -28,6 +29,8 @@ namespace IssueTracker.Services
         public string Description { get; set; }
         public int CreatedByUserId { get; set; }
         public int ProjectId { get; set; }
+        [NotNull]
+        public List<LabelDto> Labels { get; set; }
     }
 
     public class IssueDto
@@ -39,6 +42,7 @@ namespace IssueTracker.Services
         public string StatusName { get; set; }
         public int? AssignedUserId { get; set; }
         public string UserName { get; set; }
+        public List<LabelDto> Labels { get; set; }
     }
 
     public class AddIssueDto
@@ -58,6 +62,7 @@ namespace IssueTracker.Services
         public int? AssignedUserId { get; set; }
         public int StatusId { get; set; }
         public int Id { get; set; }
+        public List<int> LabelIds { get; set; }
     }
     
     
@@ -83,7 +88,12 @@ namespace IssueTracker.Services
                     StatusId = x.IssueStatusId,
                     StatusName = x.IssueStatus.Name,
                     AssignedUserId = x.AssignedUserId,
-                    UserName = x.AssignedUser.Name
+                    UserName = x.AssignedUser.Name,
+                    Labels = x.LabelIssueMappings.Select(a => new LabelDto
+                    {
+                        Id = a.LabelId,
+                        Name = a.Label.Name
+                    }).ToList()
                 }).ToListAsync();
 
         }
@@ -124,6 +134,30 @@ namespace IssueTracker.Services
             issue.RawText = dto.Text;
             issue.IssueStatusId = dto.StatusId;
 
+            var labelIssueMappings = await db.LabelIssueMappings
+                .Where(x => x.IssueId == dto.Id)
+                .ToListAsync();
+
+            var labelIdsToAdd = dto.LabelIds
+                .Where(x => labelIssueMappings.Any(l => l.Id == x) == false)
+                .ToList();
+
+            var newLabelMappings = labelIdsToAdd
+                .Select(a => new LabelIssueMapping
+                {
+                    LabelId = a,
+                    Issue = issue
+                }).ToList();
+            
+            db.LabelIssueMappings.AddRange(newLabelMappings);
+            
+            var labelMappingsToRemove = labelIssueMappings
+                .Where(x => dto.LabelIds.Contains(x.Id) == false)
+                .ToList();
+            db.RemoveRange(labelMappingsToRemove);
+                
+                
+
             await db.SaveChangesAsync();
         }
 
@@ -152,7 +186,12 @@ namespace IssueTracker.Services
                     StatusId = x.IssueStatusId,
                     AssignedUserId = x.AssignedUserId,
                     CreatedByUserId = x.CreatedByUserId,
-                    ProjectId = x.ProjectId
+                    ProjectId = x.ProjectId,
+                    Labels = x.LabelIssueMappings.Select(a => new LabelDto()
+                    {
+                        Id = a.LabelId,
+                        Name = a.Label.Name
+                    }).ToList()
                 })
                 .SingleAsync(a => a.Id == id);
         }

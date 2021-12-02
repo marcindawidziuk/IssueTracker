@@ -8,7 +8,7 @@
             <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
               <div class="grid grid-cols-3 gap-6">
                 <div class="col-span-3 sm:col-span-2">
-                  <label for="company-website" class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700">
                     Title
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
@@ -20,19 +20,19 @@
 
               <div class="grid grid-cols-3 gap-6">
                 <div class="col-span-3 sm:col-span-2">
-                  <label for="company-website" class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700">
                     Labels
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
-                    <input type="text" name="company-website" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 p-2"
-                           placeholder="label1, label2">
+<!--                    <input type="text" name="company-website" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 p-2" placeholder="label1, label2">-->
+                    <LabelsInput v-if="details" :project-id="details.projectId" v-model:labels="labels" />
                   </div>
                 </div>
               </div>
 
               <div class="grid grid-cols-3 gap-6">
                 <div class="col-span-3 sm:col-span-2">
-                  <label for="company-website" class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700">
                     Assigned User
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
@@ -48,7 +48,7 @@
 
               <div class="grid grid-cols-3 gap-6">
                 <div class="col-span-3 sm:col-span-2">
-                  <label for="company-website" class="block text-sm font-medium text-gray-700">
+                  <label class="block text-sm font-medium text-gray-700">
                     Status
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
@@ -123,11 +123,12 @@ import {
   IssueDetailsDto,
   IssuesClient,
   IssueStatusDto,
-  IssueStatusesClient, ProjectUserDto, UpdateIssueDto, UsersClient
+  IssueStatusesClient, LabelDto, ProjectUserDto, UpdateIssueDto, UsersClient
 } from "~/src/services/api.generated.clients";
 import {ref} from "vue";
 import {useFetch} from "#app";
 import {loadUserDropdowns, UserDropdownValue} from "~/src/services/utils";
+import LabelsInput from "~/components/LabelsInput.vue";
 
 const statuses = ref<IssueStatusDto[]>([])
 const selectedStatus = ref<IssueStatusDto>()
@@ -141,6 +142,7 @@ const router = useRouter()
 const details = ref<IssueDetailsDto>()
 const title = ref("")
 const description = ref("")
+const labels = ref<LabelDto[]>([])
 
 
 const init = async function (){
@@ -148,13 +150,15 @@ const init = async function (){
   const issuesClient = new IssuesClient();
   const issueDetails = await issuesClient.get(issueId)
   details.value = issueDetails;
+  
+  labels.value = issueDetails.labels!
 
   userDropdowns.value = await loadUserDropdowns(issueDetails.projectId)
   
   selectedUserId.value = issueDetails.assignedUserId
   
-  title.value = issueDetails.title
-  description.value = issueDetails.description
+  title.value = issueDetails.title ?? ""
+  description.value = issueDetails.description ?? ""
 
   const client = new IssueStatusesClient()
   statuses.value = await client.getForProject(issueDetails.projectId)
@@ -174,8 +178,9 @@ const save = async function (){
       id: details.value.id,
       title: title.value,
       text: description.value,
-      assignedUserId: selectedUserId.value ?? undefined,
-      statusId: selectedStatus.value.id
+      assignedUserId: selectedUserId.value ?? null,
+      statusId: selectedStatus.value.id,
+      labelIds: labels.value.map(a => a.id)
     })
     await client.update(dto)
     await router.push('/issues/?projectId=' + details.value?.projectId)
