@@ -15,22 +15,31 @@ namespace IssueTracker.Services
         Task UpdateLabel(UpdateLabelDto dto);
     }
 
+    public class LabelColourOption
+    {
+        public string Name { get; set; }
+        public LabelColour LabelColour { get; set; }
+    }
+
     public class LabelDto
     {
         public int Id { get; init; }
         public string Name { get; init; }
+        public LabelColour LabelColour { get; init; }
     }
 
     public class AddLabelDto
     {
         public int ProjectId { get; set; }
         public string Name { get; set; }
+        public LabelColour LabelColour { get; set; }
     }
     
     public class UpdateLabelDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public LabelColour LabelColour { get; set; }
     }
     
     public class LabelsService : ILabelsService
@@ -50,7 +59,8 @@ namespace IssueTracker.Services
                 .Select(x => new LabelDto
                 {
                     Id = x.Id,
-                    Name = x.Name
+                    Name = x.Name,
+                    LabelColour = x.LabelColour
                 }).ToListAsync();
 
 
@@ -67,7 +77,8 @@ namespace IssueTracker.Services
                 .Select(x => new LabelDto
                 {
                     Id = x.Id,
-                    Name = x.Name
+                    Name = x.Name,
+                    LabelColour = x.LabelColour
                 }).ToListAsync();
         }
 
@@ -78,7 +89,8 @@ namespace IssueTracker.Services
             var label = new Label
             {
                 Name = dto.Name,
-                ProjectId = dto.ProjectId
+                ProjectId = dto.ProjectId,
+                LabelColour = dto.LabelColour
             };
             db.Labels.Add(label);
             await db.SaveChangesAsync();
@@ -91,6 +103,7 @@ namespace IssueTracker.Services
 
             var label = await db.Labels.SingleAsync(x => x.Id == dto.Id);
             label.Name = dto.Name;
+            label.LabelColour = dto.LabelColour;
             await db.SaveChangesAsync();
         }
     }

@@ -9,7 +9,7 @@
               <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
                 <div class="grid grid-cols-3 gap-6">
                   <div class="col-span-3 sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700" for="company-website">
+                    <label class="block text-sm font-medium text-gray-700">
                       Title
                     </label>
                     <div class="mt-1 flex rounded-md shadow-sm">
@@ -22,7 +22,7 @@
 
                 <div class="grid grid-cols-3 gap-6">
                   <div class="col-span-3 sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700" for="company-website">
+                    <label class="block text-sm font-medium text-gray-700">
                       Abbreviation
                     </label>
                     <div class="mt-1 flex rounded-md shadow-sm">
@@ -35,7 +35,7 @@
 
                 <div class="grid grid-cols-3 gap-6">
                   <div class="col-span-3 sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700" for="company-website">
+                    <label class="block text-sm font-medium text-gray-700">
                       Labels
                     </label>
                     <div class="mt-1 flex rounded-md shadow-sm">
@@ -49,7 +49,7 @@
 
                 <div class="grid grid-cols-3 gap-6">
                   <div class="col-span-3 sm:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700" for="company-website">
+                    <label class="block text-sm font-medium text-gray-700">
                       Statuses
                     </label>
                     <div class="mt-1 flex rounded-md shadow-sm">
@@ -152,7 +152,27 @@
           Labels:
           <ul class="my-2">
             <li v-for="label in labels">
-              {{ label.name }}
+              <IssueLabel :colour="label.labelColour" :name="label.name" class="m-2" />
+              <button v-if="editingLabelId !== label.id" @click="editingLabelId = label.id" class="bg-gray-500 text-white rounded rounded-full px-3">
+                Edit
+              </button>
+              
+              <div v-if="editingLabelId === label.id">
+                <input v-model="label.name" class="bg-gray-100 p-1 ml-2"/>
+                <select v-model="label.labelColour" class="p-1 ml-2">
+                  <option :value="colour.labelColour" v-for="colour in labelColourOptions">
+                    {{ colour.name }}
+                  </option>
+                </select>
+
+                <button @click="cancelEdit()" class="bg-gray-500 text-white rounded rounded-full px-3 ml-2 py-0.5">
+                  Cancel
+                </button>
+                <button @click="updateLabel(label)" class="bg-green-500 text-white rounded rounded-full px-3 py-0.5 ml-2">
+                  Update
+                </button>
+              </div>
+              
             </li>
           </ul>
           <button @click="addLabel()" class="bg-gray-500 text-white p-2 my-2">
@@ -169,24 +189,32 @@
 </template>
 
 <script lang="ts" setup>
-import draggable from "vuedraggable";
 import {avatarUrl} from '~/src/services/utils';
 import {computed, ref} from "vue";
 import {
   AddLabelDto,
-  IssueStatusesClient, LabelDto, LabelsClient,
+  IssueStatusesClient,
+  LabelColour,
+  LabelColourOption,
+  LabelDto,
+  LabelsClient,
   ProjectDetailsDto,
   ProjectsClient,
   ProjectUserDto,
+  UpdateLabelDto,
   UpdateProjectDto,
   UpdateProjectStatusDto,
   UsersClient
 } from "~/src/services/api.generated.clients";
 import TabbedContent from "~/components/TabbedContent.vue";
+import IssueLabel from "~/components/IssueLabel.vue";
 
 const route = useRoute()
 const projectId = computed(() => parseInt(route.query.projectId as string))
 const details = ref<ProjectDetailsDto>()
+
+const labelColourOptions = ref<LabelColourOption[]>([])
+const editingLabelId = ref<number | null>()
 
 const router = useRouter()
 const save = async function () {
@@ -258,6 +286,7 @@ const init = async function () {
     users.value = await usersClient.usersForProject(projectId.value)
     
     const labelClient = new LabelsClient();
+    labelColourOptions.value = await labelClient.labelColours()
     labels.value = await labelClient.labelsForProject(projectId.value)
 
   } catch (e) {
@@ -274,6 +303,7 @@ const addLabel = async function(){
     
     const labelClient = new LabelsClient();
     const dto = new AddLabelDto({
+      labelColour: LabelColour.Gray,
       projectId: projectId.value,
       name: labelName
     });
@@ -282,6 +312,34 @@ const addLabel = async function(){
   } catch (e) {
     console.log("Failed adding label", e)
     alert("Failed adding label")
+  }
+
+}
+
+const cancelEdit = async function () {
+  try {
+    editingLabelId.value = null;
+    const labelClient = new LabelsClient();
+    labels.value = await labelClient.labelsForProject(projectId.value)
+  } catch (e) {
+    console.log("Failed to cancel edit", e)
+    alert("Failed to cancel edit")
+  }
+}
+
+const updateLabel = async function (label: LabelDto) {
+  try {
+    const client = new LabelsClient();
+    const dto = new UpdateLabelDto({
+      id: label.id,
+      name: label.name,
+      labelColour: label.labelColour
+    })
+    await client.update(dto)
+    editingLabelId.value = null
+  } catch (e) {
+    console.log("Failed updating label", e)
+    alert("Failed updating label")
   }
 
 }

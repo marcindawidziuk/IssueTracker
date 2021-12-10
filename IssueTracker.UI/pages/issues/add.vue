@@ -23,8 +23,7 @@
                     Labels
                   </label>
                   <div class="mt-1 flex rounded-md shadow-sm">
-                    <input type="text" name="company-website" class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 p-2"
-                           placeholder="label1, label2">
+                    <LabelsInput v-if="projectId" :project-id="projectId" v-model:labels="labels" />
                   </div>
                 </div>
               </div>
@@ -121,15 +120,18 @@ import {
   AddIssueDto,
   IssuesClient,
   IssueStatusDto,
-  IssueStatusesClient, ProjectUserDto,
+  IssueStatusesClient, LabelDto, ProjectUserDto,
   UsersClient
 } from "~/src/services/api.generated.clients";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import LabelsInput from "~/components/LabelsInput.vue";
 
 const title = ref("")
 const description = ref("")
 const statuses = ref<IssueStatusDto[]>([])
 const selectedStatus = ref<IssueStatusDto>()
+
+const labels = ref<LabelDto[]>([])
 
 const route = useRoute()
 const router = useRouter()
@@ -156,6 +158,8 @@ const init = async function (){
   userDropdowns.value = users.value
   userDropdowns.value.unshift({id: null, name: 'Unassigned'})
 }
+
+const projectId = computed(() => parseInt(route.query.projectId as string) as number)
 
 const save = async function (){
   try {

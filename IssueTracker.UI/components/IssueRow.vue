@@ -22,10 +22,7 @@
 
       </div>
       <div class="flex">
-        <div v-for="label in labels" class="px-3 h-6 rounded-full text-xs font-semibold flex items-center bg-red-100 text-red-800">
-          <span class="w-2 h-2 rounded-full mr-1 bg-red-400"></span>
-          <span>{{ label.name }}</span>
-        </div>
+      <IssueLabel v-for="label in labels" :colour="label.labelColour" :name="label.name" class="ring-1 ring-gray-200" />
       <img v-if="avatar" :src="avatar" alt="Avatar" class="w-6 h-6 rounded-full ml-2" draggable="false">
       </div>
     </div>
@@ -35,6 +32,7 @@
 <script setup lang="ts">
 import {PropType, ref} from "vue";
 import {LabelDto} from "~/src/services/api.generated.clients";
+import IssueLabel from "~/components/IssueLabel.vue";
 
 defineProps({
   id: {

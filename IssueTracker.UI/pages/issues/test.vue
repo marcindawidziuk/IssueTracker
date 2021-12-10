@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-  <h3 class="text-xl">Issues - WinGen</h3>
+  <h3 class="text-xl">Issues - </h3>
 
   <div data-v-7ba5bd90="" class="min-h-screen flex overflow-x-scroll py-12">
     <div data-v-7ba5bd90="" class="bg-gray-100 rounded-lg px-3 py-3 column-width rounded mr-4">
