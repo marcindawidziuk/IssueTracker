@@ -4,4 +4,5 @@ export interface IssuesByColumn
 {
     status: IssueStatusDto,
     issues: IssueDto[]
+    isDragging: boolean
 }

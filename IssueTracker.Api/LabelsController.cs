@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using IssueTracker.Api.Controllers;
+using IssueTracker.Data;
 using IssueTracker.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +39,16 @@ namespace IssueTracker.Api
         public async Task UpdateLabel(UpdateLabelDto dto)
         {
             await _labelsService.UpdateLabel(dto);
+        }
+
+        [HttpGet("label-colours")]
+        public List<LabelColourOption> GetLabelColours()
+        {
+            return Enum.GetValues<LabelColour>().Select(x => new LabelColourOption
+            {
+                Name = x.ToString(),
+                LabelColour = x
+            }).ToList();
         }
     }
 }

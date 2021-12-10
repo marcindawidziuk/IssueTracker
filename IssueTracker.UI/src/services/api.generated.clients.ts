@@ -225,6 +225,57 @@ export class LabelsClient {
         }
         return Promise.resolve<void>(<any>null);
     }
+
+    labelColours(  cancelToken?: CancelToken | undefined): Promise<LabelColourOption[]> {
+        let url_ = this.baseUrl + "/api/Labels/label-colours";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processLabelColours(_response);
+        });
+    }
+
+    protected processLabelColours(response: AxiosResponse): Promise<LabelColourOption[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LabelColourOption.fromJS(item));
+            }
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<LabelColourOption[]>(<any>null);
+    }
 }
 
 export class AccountClient {
@@ -1186,6 +1237,7 @@ export class Client {
 export class LabelDto implements ILabelDto {
     id!: number;
     name!: string | null;
+    labelColour!: LabelColour;
 
     constructor(data?: ILabelDto) {
         if (data) {
@@ -1200,6 +1252,7 @@ export class LabelDto implements ILabelDto {
         if (_data) {
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.labelColour = _data["labelColour"] !== undefined ? _data["labelColour"] : <any>null;
         }
     }
 
@@ -1214,6 +1267,7 @@ export class LabelDto implements ILabelDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id !== undefined ? this.id : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["labelColour"] = this.labelColour !== undefined ? this.labelColour : <any>null;
         return data; 
     }
 }
@@ -1221,11 +1275,36 @@ export class LabelDto implements ILabelDto {
 export interface ILabelDto {
     id: number;
     name: string | null;
+    labelColour: LabelColour;
+}
+
+export enum LabelColour {
+    Slate = 0,
+    Gray = 1,
+    Neutral = 2,
+    Red = 3,
+    Orange = 4,
+    Amber = 5,
+    Yellow = 6,
+    Lime = 7,
+    Green = 8,
+    Emerald = 9,
+    Teal = 10,
+    Cyan = 11,
+    Sky = 12,
+    Blue = 13,
+    Indigo = 14,
+    Violet = 15,
+    Purple = 16,
+    Fuchia = 17,
+    Pink = 18,
+    Rose = 19,
 }
 
 export class AddLabelDto implements IAddLabelDto {
     projectId!: number;
     name!: string | null;
+    labelColour!: LabelColour;
 
     constructor(data?: IAddLabelDto) {
         if (data) {
@@ -1240,6 +1319,7 @@ export class AddLabelDto implements IAddLabelDto {
         if (_data) {
             this.projectId = _data["projectId"] !== undefined ? _data["projectId"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.labelColour = _data["labelColour"] !== undefined ? _data["labelColour"] : <any>null;
         }
     }
 
@@ -1254,6 +1334,7 @@ export class AddLabelDto implements IAddLabelDto {
         data = typeof data === 'object' ? data : {};
         data["projectId"] = this.projectId !== undefined ? this.projectId : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["labelColour"] = this.labelColour !== undefined ? this.labelColour : <any>null;
         return data; 
     }
 }
@@ -1261,11 +1342,13 @@ export class AddLabelDto implements IAddLabelDto {
 export interface IAddLabelDto {
     projectId: number;
     name: string | null;
+    labelColour: LabelColour;
 }
 
 export class UpdateLabelDto implements IUpdateLabelDto {
     id!: number;
     name!: string | null;
+    labelColour!: LabelColour;
 
     constructor(data?: IUpdateLabelDto) {
         if (data) {
@@ -1280,6 +1363,7 @@ export class UpdateLabelDto implements IUpdateLabelDto {
         if (_data) {
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.labelColour = _data["labelColour"] !== undefined ? _data["labelColour"] : <any>null;
         }
     }
 
@@ -1294,6 +1378,7 @@ export class UpdateLabelDto implements IUpdateLabelDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id !== undefined ? this.id : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["labelColour"] = this.labelColour !== undefined ? this.labelColour : <any>null;
         return data; 
     }
 }
@@ -1301,6 +1386,47 @@ export class UpdateLabelDto implements IUpdateLabelDto {
 export interface IUpdateLabelDto {
     id: number;
     name: string | null;
+    labelColour: LabelColour;
+}
+
+export class LabelColourOption implements ILabelColourOption {
+    name!: string | null;
+    labelColour!: LabelColour;
+
+    constructor(data?: ILabelColourOption) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.labelColour = _data["labelColour"] !== undefined ? _data["labelColour"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LabelColourOption {
+        data = typeof data === 'object' ? data : {};
+        let result = new LabelColourOption();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["labelColour"] = this.labelColour !== undefined ? this.labelColour : <any>null;
+        return data; 
+    }
+}
+
+export interface ILabelColourOption {
+    name: string | null;
+    labelColour: LabelColour;
 }
 
 export class AccountInfoDto implements IAccountInfoDto {

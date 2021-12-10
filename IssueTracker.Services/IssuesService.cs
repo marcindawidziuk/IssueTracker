@@ -95,6 +95,7 @@ namespace IssueTracker.Services
                     Labels = x.LabelIssueMappings.Select(a => new LabelDto
                     {
                         Id = a.LabelId,
+                        LabelColour = a.Label.LabelColour,
                         Name = a.Label.Name
                     }).ToList()
                 }).ToListAsync();
