@@ -44,9 +44,8 @@ import * as ng from 'angular';
 {%         endif -%}
 {%         if Framework.IsAxios -%}
 
-import axios, { AxiosError, AxiosStatic, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import appConfig from "../../appConfig";
-import {apiAxios} from "./ApiAxios";
+import {apiHelper} from "./ApiAxios";
 
 {%         endif -%}
 {%         if Framework.IsKnockout -%}
@@ -117,32 +116,6 @@ namespace {{ Namespace }} {
     status: number;
     fileName?: string;
     headers?: { [name: string]: any };
-}
-
-{% endif -%}
-{% if RequiresExceptionClass -%}
-{% if ExportTypes %}export {% endif %}class {{ ExceptionClassName }} extends Error {
-    message: string;
-    status: number;
-    response: string;
-    headers: { [key: string]: any; };
-    result: any;
-
-    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
-        super();
-
-        this.message = message;
-        this.status = status;
-        this.response = response;
-        this.headers = headers;
-        this.result = result;
-    }
-
-    protected is{{ ExceptionClassName }} = true;
-
-    static is{{ ExceptionClassName }}(obj: any): obj is {{ ExceptionClassName }} {
-        return obj.is{{ ExceptionClassName }} === true;
-    }
 }
 
 {% endif -%}

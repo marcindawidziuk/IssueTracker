@@ -7,16 +7,14 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
-import axios, { AxiosError, AxiosStatic, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import appConfig from "../../appConfig";
-import {apiAxios} from "./ApiAxios";
+import {apiHelper} from "./ApiAxios";
 
 export class LabelsClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    labelsForProject(projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<LabelDto[]> {
+    labelsForProject(projectId?: number | undefined ,): Promise<LabelDto[]> {
         let url_ = this.baseUrl + "/api/Labels/labels-for-project?";
         if (projectId === null)
             throw new Error("The parameter 'projectId' cannot be null.");
@@ -24,54 +22,17 @@ export class LabelsClient {
             url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processLabelsForProject(_response);
-        });
+        return $fetch<LabelDto[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processLabelsForProject(response: AxiosResponse): Promise<LabelDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(LabelDto.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<LabelDto[]>(<any>null);
-    }
-
-    searchLabelsForProject(projectId?: number | undefined, searchTerm?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<LabelDto[]> {
+    searchLabelsForProject(projectId?: number | undefined, searchTerm?: string | null | undefined ,): Promise<LabelDto[]> {
         let url_ = this.baseUrl + "/api/Labels/search-labels-for-project?";
         if (projectId === null)
             throw new Error("The parameter 'projectId' cannot be null.");
@@ -81,370 +42,132 @@ export class LabelsClient {
             url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processSearchLabelsForProject(_response);
-        });
+        return $fetch<LabelDto[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processSearchLabelsForProject(response: AxiosResponse): Promise<LabelDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(LabelDto.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<LabelDto[]>(<any>null);
-    }
-
-    add(dto: AddLabelDto , cancelToken?: CancelToken | undefined): Promise<number> {
+    add(dto: AddLabelDto ,): Promise<number> {
         let url_ = this.baseUrl + "/api/Labels/add";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAdd(_response);
-        });
+        return $fetch<number>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processAdd(response: AxiosResponse): Promise<number> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<number>(<any>null);
-    }
-
-    update(dto: UpdateLabelDto , cancelToken?: CancelToken | undefined): Promise<void> {
+    update(dto: UpdateLabelDto ,): Promise<void> {
         let url_ = this.baseUrl + "/api/Labels/update";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdate(_response);
-        });
+        return $fetch<void>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processUpdate(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    labelColours(  cancelToken?: CancelToken | undefined): Promise<LabelColourOption[]> {
+    labelColours( ): Promise<LabelColourOption[]> {
         let url_ = this.baseUrl + "/api/Labels/label-colours";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processLabelColours(_response);
-        });
-    }
-
-    protected processLabelColours(response: AxiosResponse): Promise<LabelColourOption[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(LabelColourOption.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<LabelColourOption[]>(<any>null);
+        return $fetch<LabelColourOption[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class AccountClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    getInfo(  cancelToken?: CancelToken | undefined): Promise<AccountInfoDto> {
+    getInfo( ): Promise<AccountInfoDto> {
         let url_ = this.baseUrl + "/api/Account/get-info";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetInfo(_response);
-        });
-    }
-
-    protected processGetInfo(response: AxiosResponse): Promise<AccountInfoDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = AccountInfoDto.fromJS(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<AccountInfoDto>(<any>null);
+        return $fetch<AccountInfoDto>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class AuthenticationClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    login(request: LoginRequest , cancelToken?: CancelToken | undefined): Promise<string> {
+    login(request: LoginRequest ,): Promise<string> {
         let url_ = this.baseUrl + "/api/Authentication/login";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(request);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processLogin(_response);
-        });
+        return $fetch<string>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processLogin(response: AxiosResponse): Promise<string> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<string>(<any>null);
-    }
-
-    register(request: RegisterRequest , cancelToken?: CancelToken | undefined): Promise<ServiceReponse> {
+    register(request: RegisterRequest ,): Promise<ServiceReponse> {
         let url_ = this.baseUrl + "/api/Authentication/register";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(request);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processRegister(_response);
-        });
-    }
-
-    protected processRegister(response: AxiosResponse): Promise<ServiceReponse> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ServiceReponse.fromJS(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ServiceReponse>(<any>null);
+        return $fetch<ServiceReponse>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class IssuesClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    get(issueId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<IssueDetailsDto> {
+    get(issueId?: number | undefined ,): Promise<IssueDetailsDto> {
         let url_ = this.baseUrl + "/api/Issues/get?";
         if (issueId === null)
             throw new Error("The parameter 'issueId' cannot be null.");
@@ -452,50 +175,17 @@ export class IssuesClient {
             url_ += "issueId=" + encodeURIComponent("" + issueId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGet(_response);
-        });
+        return $fetch<IssueDetailsDto>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processGet(response: AxiosResponse): Promise<IssueDetailsDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = IssueDetailsDto.fromJS(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<IssueDetailsDto>(<any>null);
-    }
-
-    search(projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<IssueDto[]> {
+    search(projectId?: number | undefined ,): Promise<IssueDto[]> {
         let url_ = this.baseUrl + "/api/Issues/search?";
         if (projectId === null)
             throw new Error("The parameter 'projectId' cannot be null.");
@@ -503,152 +193,53 @@ export class IssuesClient {
             url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processSearch(_response);
-        });
+        return $fetch<IssueDto[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processSearch(response: AxiosResponse): Promise<IssueDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(IssueDto.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<IssueDto[]>(<any>null);
-    }
-
-    add(dto: AddIssueDto , cancelToken?: CancelToken | undefined): Promise<number> {
+    add(dto: AddIssueDto ,): Promise<number> {
         let url_ = this.baseUrl + "/api/Issues/add";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAdd(_response);
-        });
+        return $fetch<number>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processAdd(response: AxiosResponse): Promise<number> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<number>(<any>null);
-    }
-
-    update(dto: UpdateIssueDto , cancelToken?: CancelToken | undefined): Promise<void> {
+    update(dto: UpdateIssueDto ,): Promise<void> {
         let url_ = this.baseUrl + "/api/Issues/update";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdate(_response);
-        });
+        return $fetch<void>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processUpdate(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    updateStatus(issueId?: number | undefined, issueStatusId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<void> {
+    updateStatus(issueId?: number | undefined, issueStatusId?: number | undefined ,): Promise<void> {
         let url_ = this.baseUrl + "/api/Issues/update-status?";
         if (issueId === null)
             throw new Error("The parameter 'issueId' cannot be null.");
@@ -660,46 +251,17 @@ export class IssuesClient {
             url_ += "issueStatusId=" + encodeURIComponent("" + issueStatusId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "POST",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdateStatus(_response);
-        });
+        return $fetch<void>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processUpdateStatus(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    assignToMyself(issueId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<void> {
+    assignToMyself(issueId?: number | undefined ,): Promise<void> {
         let url_ = this.baseUrl + "/api/Issues/assign-to-myself?";
         if (issueId === null)
             throw new Error("The parameter 'issueId' cannot be null.");
@@ -707,368 +269,134 @@ export class IssuesClient {
             url_ += "issueId=" + encodeURIComponent("" + issueId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "POST",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAssignToMyself(_response);
-        });
+        return $fetch<void>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processAssignToMyself(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    reorderIssues(issueIds: number[] , cancelToken?: CancelToken | undefined): Promise<void> {
+    reorderIssues(issueIds: number[] ,): Promise<void> {
         let url_ = this.baseUrl + "/api/Issues/reorder-issues";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(issueIds);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processReorderIssues(_response);
-        });
-    }
-
-    protected processReorderIssues(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(<any>null);
+        return $fetch<void>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class IssueStatusesClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    getForProject(projectId: number , cancelToken?: CancelToken | undefined): Promise<IssueStatusDto[]> {
+    getForProject(projectId: number ,): Promise<IssueStatusDto[]> {
         let url_ = this.baseUrl + "/api/IssueStatuses/get-for-project/{projectId}";
         if (projectId === undefined || projectId === null)
             throw new Error("The parameter 'projectId' must be defined.");
         url_ = url_.replace("{projectId}", encodeURIComponent("" + projectId));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetForProject(_response);
-        });
-    }
-
-    protected processGetForProject(response: AxiosResponse): Promise<IssueStatusDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(IssueStatusDto.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<IssueStatusDto[]>(<any>null);
+        return $fetch<IssueStatusDto[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class ProjectsClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    getAll(  cancelToken?: CancelToken | undefined): Promise<ProjectDto[]> {
+    getAll( ): Promise<ProjectDto[]> {
         let url_ = this.baseUrl + "/api/Projects/get-all";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetAll(_response);
-        });
+        return $fetch<ProjectDto[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processGetAll(response: AxiosResponse): Promise<ProjectDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ProjectDto.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ProjectDto[]>(<any>null);
-    }
-
-    add(dto: AddProjectDto , cancelToken?: CancelToken | undefined): Promise<number> {
+    add(dto: AddProjectDto ,): Promise<number> {
         let url_ = this.baseUrl + "/api/Projects/add";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAdd(_response);
-        });
+        return $fetch<number>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processAdd(response: AxiosResponse): Promise<number> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<number>(<any>null);
-    }
-
-    update(dto: UpdateProjectDto , cancelToken?: CancelToken | undefined): Promise<number> {
+    update(dto: UpdateProjectDto ,): Promise<number> {
         let url_ = this.baseUrl + "/api/Projects/update";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dto);
 
-        let options_ = <AxiosRequestConfig>{
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdate(_response);
-        });
+        return $fetch<number>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 body: content_,
+                 headers: {
+                        "Content-Type": "application/json",
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processUpdate(response: AxiosResponse): Promise<number> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<number>(<any>null);
-    }
-
-    details(id: number , cancelToken?: CancelToken | undefined): Promise<ProjectDetailsDto> {
+    details(id: number ,): Promise<ProjectDetailsDto> {
         let url_ = this.baseUrl + "/api/Projects/details/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "POST",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processDetails(_response);
-        });
-    }
-
-    protected processDetails(response: AxiosResponse): Promise<ProjectDetailsDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ProjectDetailsDto.fromJS(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ProjectDetailsDto>(<any>null);
+        return $fetch<ProjectDetailsDto>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class UsersClient {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    usersForProject(projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<ProjectUserDto[]> {
+    usersForProject(projectId?: number | undefined ,): Promise<ProjectUserDto[]> {
         let url_ = this.baseUrl + "/api/Users/users-for-project?";
         if (projectId === null)
             throw new Error("The parameter 'projectId' cannot be null.");
@@ -1076,54 +404,17 @@ export class UsersClient {
             url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUsersForProject(_response);
-        });
+        return $fetch<ProjectUserDto[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 
-    protected processUsersForProject(response: AxiosResponse): Promise<ProjectUserDto[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ProjectUserDto.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ProjectUserDto[]>(<any>null);
-    }
-
-    addUserToProject(email?: string | null | undefined, projectId?: number | undefined , cancelToken?: CancelToken | undefined): Promise<boolean> {
+    addUserToProject(email?: string | null | undefined, projectId?: number | undefined ,): Promise<boolean> {
         let url_ = this.baseUrl + "/api/Users/add-user-to-project?";
         if (email !== undefined && email !== null)
             url_ += "email=" + encodeURIComponent("" + email) + "&";
@@ -1133,104 +424,33 @@ export class UsersClient {
             url_ += "projectId=" + encodeURIComponent("" + projectId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "POST",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processAddUserToProject(_response);
-        });
-    }
-
-    protected processAddUserToProject(response: AxiosResponse): Promise<boolean> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<boolean>(<any>null);
+        return $fetch<boolean>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "POST",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
 export class Client {
-    private instance = apiAxios;
     // @ts-ignore
     private baseUrl: string = appConfig.apiUrl
 
-    weatherForecast(  cancelToken?: CancelToken | undefined): Promise<WeatherForecast[]> {
+    weatherForecast( ): Promise<WeatherForecast[]> {
         let url_ = this.baseUrl + "/WeatherForecast";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processWeatherForecast(_response);
-        });
-    }
-
-    protected processWeatherForecast(response: AxiosResponse): Promise<WeatherForecast[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(WeatherForecast.fromJS(item));
-            }
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<WeatherForecast[]>(<any>null);
+        return $fetch<WeatherForecast[]>(url_, 
+        {
+             baseURL: this.baseUrl,
+             method: "GET",
+                 headers: {
+                    Accept: 'application/json',
+                'AUTH-TOKEN': apiHelper.token
+            }})
     }
 }
 
@@ -2267,30 +1487,6 @@ export interface IWeatherForecast {
     temperatureC: number;
     temperatureF: number;
     summary: string | null;
-}
-
-export class ApiException extends Error {
-    message: string;
-    status: number;
-    response: string;
-    headers: { [key: string]: any; };
-    result: any;
-
-    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
-        super();
-
-        this.message = message;
-        this.status = status;
-        this.response = response;
-        this.headers = headers;
-        this.result = result;
-    }
-
-    protected isApiException = true;
-
-    static isApiException(obj: any): obj is ApiException {
-        return obj.isApiException === true;
-    }
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
