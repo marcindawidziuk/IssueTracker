@@ -1,5 +1,4 @@
-﻿import {userStore} from "~/stores/userStore";
-import {UsersClient} from "~/src/services/api.generated.clients";
+﻿import {UsersClient} from "~/src/services/api.generated.clients";
 
 export function avatarUrl(userName: string){
     if (userName)

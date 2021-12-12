@@ -3,7 +3,7 @@
 }
 
 const appConfig: AppConfig = {
-    apiUrl: "http://localhost:5000"
+    apiUrl: "https://localhost:5001"
 }
 
 export default appConfig

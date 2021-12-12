@@ -87,7 +87,7 @@ namespace IssueTracker.Api
             if (env.IsDevelopment())
             {
                 app.UseCors(
-                    options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                    options => options.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
                 );
                 app.UseDeveloperExceptionPage();
                 app.UseOpenApi(p => p.Path = "/swagger/{documentName}/swagger.yaml");
@@ -96,7 +96,6 @@ namespace IssueTracker.Api
             }
             app.UseHttpsRedirection();
             app.UseRouting();
-                app.UseCors(b => b.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
             app.UseAuthentication();
 
@@ -104,7 +103,7 @@ namespace IssueTracker.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers().RequireCors(a => a.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+                endpoints.MapControllers();
             });
         }
     }

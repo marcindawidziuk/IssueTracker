@@ -66,6 +66,7 @@ export default {
 
 import {AuthenticationClient, LoginRequest} from "~/src/services/api.generated.clients";
 import {userStore} from "~/stores/userStore";
+import {apiHelper} from "~/src/services/ApiAxios";
 
 const email = ref("")
 const password = ref("")
@@ -73,6 +74,7 @@ const errorMessage = ref("")
 
 const router = useRouter();
 
+const authCookie = useCookie('auth', {path: '/'})
 const login = async function(){
   try {
     const client = new AuthenticationClient();
@@ -83,6 +85,8 @@ const login = async function(){
     const token = await client.login(loginRequest)
     if (token){
       userStore.setToken(token)
+      authCookie.value = token
+      apiHelper.token = token
       await userStore.refreshUser()
       router.push({path: '/'})
     }
