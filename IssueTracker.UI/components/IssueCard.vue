@@ -49,10 +49,6 @@ defineProps({
     type: Date,
     required: true
   },
-  tagName: {
-    type: String,
-    required: true
-  },
   reference: {
     type: String,
     required: true

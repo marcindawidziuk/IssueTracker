@@ -33,12 +33,10 @@ async function init(){
     projects.value = await projectsClient.getAll()
   } catch (e) {
     console.log("Failed loading projects", e)
-    alert("Failed loading projects")
+    // alert("Failed loading projects")
   }
 
 }
 
-onMounted(() => {
-  init()
-})
+await init();
 </script>

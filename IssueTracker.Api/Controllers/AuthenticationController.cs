@@ -19,15 +19,13 @@ namespace IssueTracker.Api.Controllers
             _registrationService = registrationService;
         }
 
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<string> Login([FromBody] LoginRequest request)
         {
             return await _loginService.Login(request.Email, request.Password);
         }
         
-        [HttpPost]
-        [Route("register")]
+        [HttpPost("register")]
         public async Task<ServiceReponse> Register([FromBody] RegisterRequest request)
         {
             return await _registrationService.Register(request.Name, request.Email, request.Password);

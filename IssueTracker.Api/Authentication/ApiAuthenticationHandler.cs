@@ -65,7 +65,8 @@ namespace IssueTracker.Api.Authentication
 
             if (apiToken.ExpiryDateUtc < DateTime.UtcNow)
             {
-                return AuthenticateResult.Fail("Expired token");
+                return AuthenticateResult.NoResult();
+                // return AuthenticateResult.Fail("Expired token");
             }
 
             var user = await db.Users

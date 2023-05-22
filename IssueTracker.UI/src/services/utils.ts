@@ -18,3 +18,4 @@ export async function loadUserDropdowns(projectId: number) {
     userDropdowns.unshift({id: null, name: 'Unassigned'})
     return userDropdowns
 }
+

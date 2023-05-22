@@ -35,7 +35,7 @@
              baseURL: this.baseUrl,
              method: "{{ operation.HttpMethodUpper | upcase }}",
     {%     if operation.HasBody -%}
-             body: content_,
+             body: JSON.parse(content_),
     {%     endif -%}
              headers: {
     {%     if operation.HasContent or operation.ConsumesFormUrlEncoded -%}

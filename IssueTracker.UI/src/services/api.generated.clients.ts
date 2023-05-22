@@ -62,7 +62,7 @@ export class LabelsClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -80,7 +80,7 @@ export class LabelsClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -136,7 +136,7 @@ export class AuthenticationClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -154,7 +154,7 @@ export class AuthenticationClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -213,7 +213,7 @@ export class IssuesClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -231,7 +231,7 @@ export class IssuesClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -289,7 +289,7 @@ export class IssuesClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -348,7 +348,7 @@ export class ProjectsClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',
@@ -366,7 +366,7 @@ export class ProjectsClient {
         {
              baseURL: this.baseUrl,
              method: "POST",
-                 body: content_,
+                 body: JSON.parse(content_),
                  headers: {
                         "Content-Type": "application/json",
                     Accept: 'application/json',

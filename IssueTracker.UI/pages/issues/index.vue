@@ -45,11 +45,11 @@
     </div>
     
 
-    <div class="flex -space-x-1 overflow-hidden mt-2 ml-3">
+    <div class="flex -space-x-1 overflow-hidden mt-2 ml-3 p-1">
       <img v-for="user in userDropdowns" 
            @click="filterByUser(user)"
            class="inline-block h-6 w-6 rounded-full ring-2" 
-           :class="filterUser === user ? 'ring-gray-500' : 'ring-white' "
+           :class="[filterUser === user ? 'ring-gray-500' : 'ring-white' , !!filterUser && filterUser !== user ? 'opacity-90' : 'z-10']"
            :src="avatarUrl(user.name)" 
            :title="user.name"
            :alt="user.name">
